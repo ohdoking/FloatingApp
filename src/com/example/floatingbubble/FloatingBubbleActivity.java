@@ -23,7 +23,7 @@ public class FloatingBubbleActivity extends Activity {
 	      getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, 
 	                  WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
 	      
-	      System.out.println("hi soolin branch");
+	      System.out.println("hi soolin branch2");
 	      setContentView(R.layout.activity_floating_bubble_example);
 		Intent intent = new Intent(FloatingBubbleActivity.this, FloatingFaceBubbleService.class);
 		startService(intent);
