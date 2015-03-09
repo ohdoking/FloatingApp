@@ -23,7 +23,6 @@ public class FloatingBubbleActivity extends Activity {
 	      getWindow().addFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
 	      /*getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, 
 	                  WindowManager.LayoutParams.FLAG_BLUR_BEHIND);*/
-	    Log.i("try","open");  
 //	      setContentView(R.layout.activity_floating_bubble_example);
 	    
 		Intent intent = new Intent(FloatingBubbleActivity.this, FloatingFaceBubbleService.class);
@@ -41,24 +40,24 @@ public class FloatingBubbleActivity extends Activity {
 //		return true;
 //	}
 
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-		
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+//	@Override
+//	protected void onResume() {
+//		// TODO Auto-generated method stub
+//		super.onResume();
+//		
+//	}
+//
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		// Handle action bar item clicks here. The action bar will
+//		// automatically handle clicks on the Home/Up button, so long
+//		// as you specify a parent activity in AndroidManifest.xml.
+//		int id = item.getItemId();
+//		if (id == R.id.action_settings) {
+//			return true;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 
 }
 

@@ -81,7 +81,6 @@ public class FloatingFaceBubbleService extends Service {
                         windowManager.updateViewLayout(v, myParams);
                         break;
                     }
-                	Log.i("location",String.valueOf(myParams.x)+" : "+String.valueOf(myParams.y));
                     return false;
                 }
             });

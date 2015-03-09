@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,13 +12,11 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,6 +66,8 @@ public class ListActivity extends Activity {
 	private EditText nameEdit;
 	private EditText cardnumEdit;
 	private CheckBox secureEdit;
+	
+	private ImageView showBigImg;
 	private TextView result;
 
 	public Image img;
@@ -85,6 +86,7 @@ public class ListActivity extends Activity {
 
 	public AlertDialog al;
 	public AlertDialog alAddDialog;
+	public AlertDialog alShowDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +104,6 @@ public class ListActivity extends Activity {
 		securityDb = new SecurityDbAdapter(this);
 
 		l = new ArrayList<Image>();
-		// 수린
-		ifCardListIsEmpty();
 
 		ids();
 		listUpdate("selectAll");
@@ -124,8 +124,6 @@ public class ListActivity extends Activity {
 	public void ids() {
 		// linear = (LinearLayout) View.inflate(
 		// ListActivity.this, R.layout.add_alert, null);
-		editLayer = (LinearLayout) View.inflate(ListActivity.this,
-				R.layout.edit_alert, null);
 		// get the large image view
 
 		// LayoutInflater linf = LayoutInflater.from(this);
@@ -141,10 +139,7 @@ public class ListActivity extends Activity {
 
 		// result = (TextView) findViewById(R.id.result);
 
-		EditCarding = (ImageView) editLayer.findViewById(R.id.editCardimg);
-		nameEdit = (EditText) editLayer.findViewById(R.id.edittextCardName);
-		cardnumEdit = (EditText) editLayer.findViewById(R.id.edittextCardNum);
-		secureEdit = (CheckBox) editLayer.findViewById(R.id.editcheckSecure);
+		
 	}
 
 	/*
@@ -163,15 +158,14 @@ public class ListActivity extends Activity {
 			
 			final LinearLayout linear2 = (LinearLayout) View.inflate(
 					ListActivity.this, R.layout.pop_up, null);
-
+			
+			
 			final ImageView tempImg = (ImageView) linear2.findViewById(R.id.imgTest);
 			// set the larger image view to display the chosen bitmap calling
 			// picView.setImageBitmap(imgAdapt.getPic(position));
 			// result.setText( imgAdapt.getImage(position).getName());
 			alAddDialog = new AlertDialog.Builder(ListActivity.this)
-					.setTitle("추가 페이지").setIcon(R.drawable.floating_img2)
-					// .setMessage("hi")
-					.setView(linear2).setCancelable(false).show();
+					.setView(linear2).setCancelable(true).show();
 			
 			final int pos = position;
 			final Image imgTemp = null;
@@ -180,28 +174,44 @@ public class ListActivity extends Activity {
 			final Image selectImg = imgAdapt.getImage(position);
 			
               	tempImg.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
+              	
+              	tempImg.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						
+						final LinearLayout linear3 = (LinearLayout) View.inflate(
+								ListActivity.this, R.layout.big_pop_up, null);
+						
+						alShowDialog = new AlertDialog.Builder(ListActivity.this,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+						.setView(linear3).setCancelable(true).show();
+						
+						showBigImg= (ImageView)linear3.findViewById(R.id.bigImg);
+						
+						showBigImg.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
+						
+						alShowDialog.setOnKeyListener(new Dialog.OnKeyListener() {
+
+				            @Override
+				            public boolean onKey(DialogInterface arg0, int keyCode,
+				                    KeyEvent event) {
+				                // TODO Auto-generated method stub
+				                if (keyCode == KeyEvent.KEYCODE_BACK) {
+				                    alShowDialog.dismiss();
+				                    linear3.removeView(linear3);
+//				                    linear3 = (LinearLayout) View.inflate(
+//				        					ListActivity.this, R.layout.big_pop_up, null);
+				                }
+				                return true;
+				            }
+				        });
+						
+						
+					}
+				});
 			
-//			final Handler handler = new Handler() {
-//	            @Override
-//	            public void handleMessage(Message message) {
-//	            	Image img = (Image)message.obj;
-//	            	Drawable drawable = getResources().getDrawable(R.drawable.cancelbtn);
-//	                	tempImg.setImageBitmap(BitmapFactory.decodeFile(img.getImg()));
-//				Log.i("pic 주소!!!!!! : ",img.getImg());
-//	                	
-////	                	tempImg.setImageDrawable(drawable);
-//	            }
-//	        };
-//
-//	        Thread thread = new Thread() {
-//	            @Override
-//	            public void run() {
-//	                //TODO : set imageView to a "pending" image
-//	                Message message = handler.obtainMessage(1, imageDb.select(pos));
-//	                handler.sendMessage(message);
-//	            }
-//	        };
-//	        thread.start();
+
 	        
 		
 		}
@@ -235,7 +245,7 @@ public class ListActivity extends Activity {
 					.setIcon(R.drawable.floating_img2)
 					// .setMessage("hi")
 					.setView(linear)
-					.setCancelable(false)
+					.setCancelable(true)
 					.setNegativeButton("추가",
 							new DialogInterface.OnClickListener() {
 								@Override
@@ -253,12 +263,7 @@ public class ListActivity extends Activity {
 									// TODO 이미지 추가 해줘야함
 									 imgTemp.setImg(Word.IMG);
 									// l.add(img);
-									Log.i("img주소",Word.IMG);
-									Log.d("nnnnnn", name.getText().toString()
-											+ "!!");
-									// result.setText());
 
-									// setImageBitmap(BitmapFactory.decodeFile(picturePath));
 
 									String.valueOf(imageDb.insert(imgTemp));
 
@@ -305,12 +310,20 @@ public class ListActivity extends Activity {
 			 */
 
 			// 키 얼럴트 창이 떠오른다!!!!
+			
+			editLayer = (LinearLayout) View.inflate(ListActivity.this,
+					R.layout.edit_alert, null);
+			EditCarding = (ImageView) editLayer.findViewById(R.id.editCardimg);
+			nameEdit = (EditText) editLayer.findViewById(R.id.edittextCardName);
+			cardnumEdit = (EditText) editLayer.findViewById(R.id.edittextCardNum);
+			secureEdit = (CheckBox) editLayer.findViewById(R.id.editcheckSecure);
+
 
 			al = new AlertDialog.Builder(ListActivity.this)
 					.setTitle("수정 페이지")
 					.setIcon(R.drawable.floating_img2)
 					.setView(editLayer)
-					.setCancelable(false)
+					.setCancelable(true)
 					.setPositiveButton("삭제",
 							new DialogInterface.OnClickListener() {
 
@@ -346,7 +359,6 @@ public class ListActivity extends Activity {
 									tempImg.setSecure(secureEdit.isChecked());
 									//TODO 이미지 업데이트시 생각
 //									tempImg.setImg(selectImg.getImg());
-//									tempImg.setImg(R.drawable.temp_id);
 									imageDb.update(tempImg, Integer
 											.valueOf(cardnumEdit.getText()
 													.toString()));
@@ -358,13 +370,26 @@ public class ListActivity extends Activity {
 							})
 
 					.show();
+			
+			al.setOnKeyListener(new Dialog.OnKeyListener() {
+
+	            @Override
+	            public boolean onKey(DialogInterface arg0, int keyCode,
+	                    KeyEvent event) {
+	                // TODO Auto-generated method stub
+	                if (keyCode == KeyEvent.KEYCODE_BACK) {
+//	                    finish();
+	                    al.dismiss();
+	                }
+	                return true;
+	            }
+	        });
 
 			Log.d("carnum", String.valueOf(selectImg.isSecure()));
 
 			nameEdit.setText(selectImg.getName());
 			cardnumEdit.setText(String.valueOf(selectImg.getCardName()));
 			secureEdit.setChecked(selectImg.isSecure());
-			Log.i("!!!!! 알려줘 주소",selectImg.getImg());
 			EditCarding.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
 
 			return true;
@@ -421,9 +446,7 @@ public class ListActivity extends Activity {
 			// gallaryImg = picturePat;
 			Word.IMG = picturePath;
 			cursor.close();
-//			tempImg.setImageBitmap(BitmapFactory.decodeFile(Word.IMG));
 			addCardimg.setImageBitmap(BitmapFactory.decodeFile(Word.IMG));
-			// picView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
 
 		}
 
@@ -602,11 +625,6 @@ public class ListActivity extends Activity {
 		}
 	};
 
-	public void ifCardListIsEmpty() {
-		// if (securityDb.isPasswordEmpty()) {
-		// setPassword();
-		// }
-	}
 
 	/*
 	 * Base Adapter
@@ -682,7 +700,7 @@ public class ListActivity extends Activity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-
+			//이미지 크기 조절 및 위치
 			// create the view
 			ImageView imageView = new ImageView(galleryContext);
 			// specify the bitmap at this position in the array
@@ -716,7 +734,23 @@ public class ListActivity extends Activity {
 		}
 
 	}
+	
+	/*
+	 *  뒤로가기 (back)
+	 */
 
+	
+	/*	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+     // TODO Auto-generated method stub
+
+     	if( keyCode == KeyEvent.KEYCODE_BACK){
+     		
+     		Toast.makeText(this, "Back키를 누르셨군요", Toast.LENGTH_SHORT).show();
+     		return false;
+     	}
+     	return super.onKeyDown(keyCode, event);
+}*/
 	/*
 	 * ETC
 	 */

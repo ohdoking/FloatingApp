@@ -38,7 +38,7 @@ public final class R {
         public static final int yellowcard=0x7f02000d;
     }
     public static final class id {
-        public static final int action_settings=0x7f08001d;
+        public static final int action_settings=0x7f08001e;
         public static final int add=0x7f080008;
         public static final int addCard=0x7f080000;
         public static final int addCardimg=0x7f08000c;
@@ -46,40 +46,42 @@ public final class R {
         public static final int addtextCardName=0x7f08000d;
         public static final int addtextCardNum=0x7f08000e;
         public static final int barcode=0x7f080004;
+        public static final int bigImg=0x7f080010;
         public static final int cardnum=0x7f080006;
         public static final int closeWindows=0x7f080002;
         public static final int delete=0x7f08000a;
-        public static final int editCardimg=0x7f080010;
-        public static final int editText1=0x7f080018;
-        public static final int editcheckSecure=0x7f080016;
-        public static final int edittextCardName=0x7f080012;
-        public static final int edittextCardNum=0x7f080014;
+        public static final int editCardimg=0x7f080011;
+        public static final int editText1=0x7f080019;
+        public static final int editcheckSecure=0x7f080017;
+        public static final int edittextCardName=0x7f080013;
+        public static final int edittextCardNum=0x7f080015;
         public static final int fix=0x7f080009;
         public static final int gallery=0x7f080001;
-        public static final int imageView1=0x7f080017;
-        public static final int imgTest=0x7f080019;
+        public static final int imageView1=0x7f080018;
+        public static final int imgTest=0x7f08001a;
         public static final int name=0x7f080005;
-        public static final int passwordfirst=0x7f08001a;
-        public static final int passwordsecond=0x7f08001c;
+        public static final int passwordfirst=0x7f08001b;
+        public static final int passwordsecond=0x7f08001d;
         public static final int picture=0x7f080003;
         public static final int result=0x7f08000b;
         public static final int secure=0x7f080007;
-        public static final int textCardName=0x7f080011;
-        public static final int textView1=0x7f080013;
-        public static final int textView2=0x7f08001b;
-        public static final int textView3=0x7f080015;
+        public static final int textCardName=0x7f080012;
+        public static final int textView1=0x7f080014;
+        public static final int textView2=0x7f08001c;
+        public static final int textView3=0x7f080016;
     }
     public static final class layout {
         public static final int activity_floating_bubble_example=0x7f030000;
         public static final int activity_list_acitivity=0x7f030001;
         public static final int activity_main=0x7f030002;
         public static final int add_alert=0x7f030003;
-        public static final int edit_alert=0x7f030004;
-        public static final int final_page=0x7f030005;
-        public static final int pass_word=0x7f030006;
-        public static final int pop_up=0x7f030007;
-        public static final int set_pass_word=0x7f030008;
-        public static final int start_page=0x7f030009;
+        public static final int big_pop_up=0x7f030004;
+        public static final int edit_alert=0x7f030005;
+        public static final int final_page=0x7f030006;
+        public static final int pass_word=0x7f030007;
+        public static final int pop_up=0x7f030008;
+        public static final int set_pass_word=0x7f030009;
+        public static final int start_page=0x7f03000a;
     }
     public static final class menu {
         public static final int main=0x7f070000;
