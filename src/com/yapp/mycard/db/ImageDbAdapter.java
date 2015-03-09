@@ -47,7 +47,7 @@ public class ImageDbAdapter {
 		values.put("etc", "test");
 		values.put("secure", img.isSecure());
 		// values.put("img", img.getImg());
-		values.put("img", R.drawable.redcard);
+		values.put("img", img.getImg());
 
 		l = db.insert("image", null, values); // ���̺�/���÷���/������(���÷���=����Ʈ)
 
@@ -67,7 +67,7 @@ public class ImageDbAdapter {
 		values.put("card_name", img.getCardName());
 		values.put("etc", img.getEtc());
 		values.put("secure", img.isSecure());
-		values.put("img", R.drawable.mintcard);
+//		values.put("img", R.drawable.mintcard);
 
 		db.update("image", values, "card_name=" + cardNum, null);
 
@@ -101,7 +101,7 @@ public class ImageDbAdapter {
 			int id = result.getInt(0);
 			String name = result.getString(1);
 			Integer cardName = Integer.parseInt(result.getString(2));
-			Integer img2 = Integer.parseInt(result.getString(3));
+			String img2 = result.getString(3);
 			// String img2 = result.getString(3);
 			boolean secure = Boolean.parseBoolean(result.getString(4));
 			String etc = result.getString(5);
@@ -131,7 +131,8 @@ public class ImageDbAdapter {
 				img.setId(result.getInt(0));
 				img.setName(result.getString(1));
 				img.setCardName(Integer.parseInt(result.getString(2)));
-				img.setImg(Integer.parseInt(result.getString(3)));
+				img.setImg(result.getString(3));
+				Log.i("dbohdoking",result.getString(3));
 				img.setSecure(Boolean.parseBoolean(result.getString(4)));
 				img.setEtc(result.getString(5));
 

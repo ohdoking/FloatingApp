@@ -14,12 +14,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -90,8 +91,8 @@ public class ListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, 
-                WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+//		getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, 
+//                WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
 		
 		
 		setContentView(R.layout.activity_list_acitivity);
@@ -150,16 +151,20 @@ public class ListActivity extends Activity {
 	 * Click
 	 */
 
-	// ī�带 �߰��ϴ� �̺�Ʈ
+	//카드보기
 	public OnItemClickListener showCard = new OnItemClickListener() {
 		// handle clicks
+		
+		
 		public void onItemClick(AdapterView<?> parent, View v, int position,
 				long id) {
 
+			
+			
 			final LinearLayout linear2 = (LinearLayout) View.inflate(
 					ListActivity.this, R.layout.pop_up, null);
 
-			ImageView tempImg = (ImageView) linear2.findViewById(R.id.imgTest);
+			final ImageView tempImg = (ImageView) linear2.findViewById(R.id.imgTest);
 			// set the larger image view to display the chosen bitmap calling
 			// picView.setImageBitmap(imgAdapt.getPic(position));
 			// result.setText( imgAdapt.getImage(position).getName());
@@ -167,18 +172,37 @@ public class ListActivity extends Activity {
 					.setTitle("추가 페이지").setIcon(R.drawable.floating_img2)
 					// .setMessage("hi")
 					.setView(linear2).setCancelable(false).show();
-			Log.d("showcardname!!!!!!!!!!", Word.IMG);
 			
-			Drawable drawable = getResources().getDrawable(R.drawable.cancelbtn);
+			final int pos = position;
+			final Image imgTemp = null;
 			
+
+			final Image selectImg = imgAdapt.getImage(position);
 			
-			if(!Word.IMG.equals("")){
-				tempImg.setImageBitmap(BitmapFactory.decodeFile(Word.IMG));
-		
-			}
-			else{
-				tempImg.setImageDrawable(drawable);
-			}
+              	tempImg.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
+			
+//			final Handler handler = new Handler() {
+//	            @Override
+//	            public void handleMessage(Message message) {
+//	            	Image img = (Image)message.obj;
+//	            	Drawable drawable = getResources().getDrawable(R.drawable.cancelbtn);
+//	                	tempImg.setImageBitmap(BitmapFactory.decodeFile(img.getImg()));
+//				Log.i("pic 주소!!!!!! : ",img.getImg());
+//	                	
+////	                	tempImg.setImageDrawable(drawable);
+//	            }
+//	        };
+//
+//	        Thread thread = new Thread() {
+//	            @Override
+//	            public void run() {
+//	                //TODO : set imageView to a "pending" image
+//	                Message message = handler.obtainMessage(1, imageDb.select(pos));
+//	                handler.sendMessage(message);
+//	            }
+//	        };
+//	        thread.start();
+	        
 		
 		}
 	};
@@ -225,9 +249,11 @@ public class ListActivity extends Activity {
 													.toString()));
 									// imgTemp.setCardName(11);
 									imgTemp.setSecure(secure.isChecked());
+									
 									// TODO 이미지 추가 해줘야함
-									// imgTemp.setImg(gallaryImg);
+									 imgTemp.setImg(Word.IMG);
 									// l.add(img);
+									Log.i("img주소",Word.IMG);
 									Log.d("nnnnnn", name.getText().toString()
 											+ "!!");
 									// result.setText());
@@ -318,7 +344,9 @@ public class ListActivity extends Activity {
 											.valueOf(cardnumEdit.getText()
 													.toString()));
 									tempImg.setSecure(secureEdit.isChecked());
-									tempImg.setImg(R.drawable.temp_id);
+									//TODO 이미지 업데이트시 생각
+//									tempImg.setImg(selectImg.getImg());
+//									tempImg.setImg(R.drawable.temp_id);
 									imageDb.update(tempImg, Integer
 											.valueOf(cardnumEdit.getText()
 													.toString()));
@@ -336,6 +364,8 @@ public class ListActivity extends Activity {
 			nameEdit.setText(selectImg.getName());
 			cardnumEdit.setText(String.valueOf(selectImg.getCardName()));
 			secureEdit.setChecked(selectImg.isSecure());
+			Log.i("!!!!! 알려줘 주소",selectImg.getImg());
+			EditCarding.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
 
 			return true;
 
@@ -391,7 +421,8 @@ public class ListActivity extends Activity {
 			// gallaryImg = picturePat;
 			Word.IMG = picturePath;
 			cursor.close();
-
+//			tempImg.setImageBitmap(BitmapFactory.decodeFile(Word.IMG));
+			addCardimg.setImageBitmap(BitmapFactory.decodeFile(Word.IMG));
 			// picView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
 
 		}
@@ -612,8 +643,11 @@ public class ListActivity extends Activity {
 			// set placeholder as all thumbnail images in the gallery initially
 			for (int i = 0; i < imageBitmaps.length; i++) {
 
+//				placeholder = BitmapFactory.decodeResource(
+//						galleryContext.getResources(), l.get(i).getImg());
+//				placeholder = BitmapFactory.decodeFile(l.get(i).getImg());
 				placeholder = BitmapFactory.decodeResource(
-						galleryContext.getResources(), l.get(i).getImg());
+						galleryContext.getResources(),R.drawable.redcard);
 				imageBitmaps[i] = placeholder;
 
 			}

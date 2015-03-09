@@ -1,4 +1,4 @@
-package com.example.floatingbubble;
+/*package com.example.floatingbubble;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -45,4 +45,4 @@ public class LittleIcon extends View {
         else
             return false;
     }
-}
+}*/

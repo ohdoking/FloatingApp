@@ -6,7 +6,7 @@ public class Image {
 	int id;
 	String name;
 	Integer cardName;
-	Integer img;
+	String img;
 	boolean secure;
 	String etc;
 	String img2;
@@ -18,10 +18,10 @@ public class Image {
 	public void setImg2(String img2) {
 		this.img2 = img2;
 	}
-	public Integer getImg() {
+	public String getImg() {
 		return img;
 	}
-	public void setImg(Integer img) {
+	public void setImg(String img) {
 		this.img = img;
 	}
 	public int getId() {
