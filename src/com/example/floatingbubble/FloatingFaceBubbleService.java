@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,6 +18,8 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+
 public class FloatingFaceBubbleService extends Service {
     private WindowManager windowManager;
     private ImageView floatingFaceBubble;
@@ -78,6 +81,7 @@ public class FloatingFaceBubbleService extends Service {
                         windowManager.updateViewLayout(v, myParams);
                         break;
                     }
+                	Log.i("location",String.valueOf(myParams.x)+" : "+String.valueOf(myParams.y));
                     return false;
                 }
             });
@@ -91,7 +95,7 @@ public class FloatingFaceBubbleService extends Service {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Toast.makeText(FloatingFaceBubbleService.this, "클릭됨~", Toast.LENGTH_SHORT).show();
+//				Toast.makeText(FloatingFaceBubbleService.this, "클릭됨~", Toast.LENGTH_SHORT).show();
 				Context context = getApplicationContext();
 				Intent intent = new Intent(context, ListActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
@@ -102,9 +106,10 @@ public class FloatingFaceBubbleService extends Service {
         floatingFaceBubble.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
-				Toast.makeText(FloatingFaceBubbleService.this, "어플종료", Toast.LENGTH_SHORT).show();
-				android.os.Process.killProcess(android.os.Process.myPid()); //강제종료
+				Log.i("die","죽음!!");
+//				Toast.makeText(FloatingFaceBubbleService.this, "어플종료", Toast.LENGTH_SHORT).show();
 				stopSelf();
+				android.os.Process.killProcess(android.os.Process.myPid()); //강제종료
 				return true;
 			}
 		});
@@ -113,6 +118,8 @@ public class FloatingFaceBubbleService extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
+		
+	
 		return null;
 	}
 //	서비스 종료시 뷰를 제거 해야 한다.
@@ -124,6 +131,10 @@ public class FloatingFaceBubbleService extends Service {
             ((WindowManager) getSystemService(WINDOW_SERVICE)).removeView(floatingFaceBubble);
             floatingFaceBubble = null;
         }
+        this.stopSelf();
+    	android.os.Process.killProcess(android.os.Process.myPid()); //강제종료
+
+		
     }
     
 }
