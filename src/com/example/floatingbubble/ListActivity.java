@@ -1,6 +1,14 @@
 package com.example.floatingbubble;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.EnumMap;
+import java.util.Locale;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,12 +17,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.os.Environment;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -36,6 +43,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 import com.yapp.mycard.db.ImageDbAdapter;
 import com.yapp.mycard.db.SecurityDbAdapter;
 import com.yapp.mycard.dto.Image;
@@ -62,7 +74,7 @@ public class ListActivity extends Activity {
 	private CheckBox secure;
 	private ImageView addCardimg;
 
-	private ImageView EditCarding;
+	private ImageView editCarding;
 	private EditText nameEdit;
 	private EditText cardnumEdit;
 	private CheckBox secureEdit;
@@ -87,6 +99,8 @@ public class ListActivity extends Activity {
 	public AlertDialog al;
 	public AlertDialog alAddDialog;
 	public AlertDialog alShowDialog;
+	
+	Bitmap bitmap = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +123,7 @@ public class ListActivity extends Activity {
 		listUpdate("selectAll");
 		// Add Card
 		addCard.setOnClickListener(addImageClicked);
-
+		
 		// Edit Card
 		picGallery.setAdapter(imgAdapt);
 		picGallery.setOnItemLongClickListener(editImageClicked);
@@ -179,7 +193,6 @@ public class ListActivity extends Activity {
 					
 					@Override
 					public void onClick(View v) {
-						// TODO Auto-generated method stub
 						
 						final LinearLayout linear3 = (LinearLayout) View.inflate(
 								ListActivity.this, R.layout.big_pop_up, null);
@@ -217,7 +230,7 @@ public class ListActivity extends Activity {
 		}
 	};
 
-	// ���� ��Ƽ��Ƽ�� ���� ��ư�̺�Ʈ
+	// x 버튼 누르면 종료 
 	public OnClickListener historyBack = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -237,12 +250,13 @@ public class ListActivity extends Activity {
 			name = (EditText) linear.findViewById(R.id.addtextCardName);
 			cardnum = (EditText) linear.findViewById(R.id.addtextCardNum);
 			secure = (CheckBox) linear.findViewById(R.id.addcheckSecure);
+			
 
 			addCardimg.setOnClickListener(addImage);
 			// 키 얼럴트 창이 떠오른다!!!!
 			alAddDialog = new AlertDialog.Builder(ListActivity.this)
 					.setTitle("추가 페이지")
-					.setIcon(R.drawable.floating_img2)
+					.setIcon(R.drawable.floating_img3)
 					// .setMessage("hi")
 					.setView(linear)
 					.setCancelable(true)
@@ -253,18 +267,12 @@ public class ListActivity extends Activity {
 										int which) {
 
 									imgTemp.setName(name.getText().toString());
-									// img.setCardName(Integer.valueOf(cardnum.getText().toString()));
-									imgTemp.setCardName(Integer
-											.parseInt(cardnum.getText()
+									imgTemp.setCardName(Long
+											.parseLong(cardnum.getText()
 													.toString()));
-									// imgTemp.setCardName(11);
 									imgTemp.setSecure(secure.isChecked());
+									imgTemp.setImg(Word.IMG);
 									
-									// TODO 이미지 추가 해줘야함
-									 imgTemp.setImg(Word.IMG);
-									// l.add(img);
-
-
 									String.valueOf(imageDb.insert(imgTemp));
 
 									refresh();
@@ -313,15 +321,17 @@ public class ListActivity extends Activity {
 			
 			editLayer = (LinearLayout) View.inflate(ListActivity.this,
 					R.layout.edit_alert, null);
-			EditCarding = (ImageView) editLayer.findViewById(R.id.editCardimg);
+			editCarding = (ImageView) editLayer.findViewById(R.id.editCardimg);
 			nameEdit = (EditText) editLayer.findViewById(R.id.edittextCardName);
 			cardnumEdit = (EditText) editLayer.findViewById(R.id.edittextCardNum);
 			secureEdit = (CheckBox) editLayer.findViewById(R.id.editcheckSecure);
+			
+			editCarding.setOnClickListener(editImage);
 
 
 			al = new AlertDialog.Builder(ListActivity.this)
 					.setTitle("수정 페이지")
-					.setIcon(R.drawable.floating_img2)
+					.setIcon(R.drawable.floating_img3)
 					.setView(editLayer)
 					.setCancelable(true)
 					.setPositiveButton("삭제",
@@ -353,7 +363,7 @@ public class ListActivity extends Activity {
 									Image tempImg = new Image();
 									tempImg.setName(nameEdit.getText()
 											.toString());
-									tempImg.setCardName(Integer
+									tempImg.setCardName(Long
 											.valueOf(cardnumEdit.getText()
 													.toString()));
 									tempImg.setSecure(secureEdit.isChecked());
@@ -390,7 +400,7 @@ public class ListActivity extends Activity {
 			nameEdit.setText(selectImg.getName());
 			cardnumEdit.setText(String.valueOf(selectImg.getCardName()));
 			secureEdit.setChecked(selectImg.isSecure());
-			EditCarding.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
+			editCarding.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
 
 			return true;
 
@@ -402,11 +412,32 @@ public class ListActivity extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			Intent i = new Intent(
+			
+/*			
+ * 갤러리 불러오기
+ * Intent i = new Intent(
 					Intent.ACTION_PICK,
 					android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
 			startActivityForResult(i, RESULT_LOAD_IMAGE);
+*/		
+			Intent i = new Intent("com.google.zxing.client.android.SCAN");
+			
+			startActivityForResult(i, 0);
+			
+		
+		}
+	};
+	
+	public OnClickListener editImage = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			Intent i = new Intent("com.google.zxing.client.android.SCAN");
+			Log.i("??","여기요");
+			startActivityForResult(i, 1);
+			
+		
 		}
 	};
 
@@ -430,9 +461,55 @@ public class ListActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		
+		if (requestCode == 0 || requestCode == 1) {
+		      if (resultCode == RESULT_OK) {
+		         String contents = data.getStringExtra("SCAN_RESULT");
+		         String format = data.getStringExtra("SCAN_RESULT_FORMAT");
+		         BarcodeFormat barcodeFormat = BarcodeFormat.valueOf(format);
+		         
+		         String barcode_data = contents;
+		         
+		     	try {
+		     		
+					bitmap = encodeAsBitmap(barcode_data, barcodeFormat, 600,
+							300);
+					String temS= getDate(System.currentTimeMillis());
+					String resultPath = null;
+					resultPath = saveBitmaptoJpeg(bitmap,"barcode", "barcode_" + temS);
+					Word.IMG = resultPath;
+					Log.i("resultPathOhdoking",resultPath);
+					
+					
+					if(requestCode == 0)
+					{
+						
+						addCardimg.setImageBitmap(bitmap);
+						cardnum.setText(contents);
+					}
+					else if(requestCode == 1)
+					{
+						editCarding.setImageBitmap(bitmap);
+						cardnumEdit.setText(contents);
+						
+					}
 
-		if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK
-				&& null != data) {
+
+				} catch (WriterException e) {
+					e.printStackTrace();
+				}
+		         
+		         
+		         // Handle successful scan
+		      } else if (resultCode == RESULT_CANCELED) {
+		         // Handle cancel
+		      }
+		   }
+
+		/*if (requestCode == RESULT_LOAD_IMAGE 
+				&& resultCode == RESULT_OK
+				&& null != data) 
+		{
 			Uri selectedImage = data.getData();
 			String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
@@ -448,9 +525,55 @@ public class ListActivity extends Activity {
 			cursor.close();
 			addCardimg.setImageBitmap(BitmapFactory.decodeFile(Word.IMG));
 
-		}
+		}*/
 
 	}
+	
+	/*
+	 *  bitmap을 jpeg 변환하여 갤러리에 저장
+	 */
+	
+	public static String saveBitmaptoJpeg(Bitmap bitmap,String folder, String name){
+    	String ex_storage = Environment.getExternalStorageDirectory().getAbsolutePath();
+                                   // Get Absolute Path in External Sdcard 
+    	String foler_name = "/"+folder+"/";
+    	String file_name = name+".jpg";
+    	String string_path = ex_storage+foler_name;
+    	String result_path = string_path+file_name;
+    	
+    	File file_path; 
+    	try{
+    		file_path = new File(string_path);
+    		if(!file_path.isDirectory()){
+    			file_path.mkdirs();
+    		}
+    		FileOutputStream out = new FileOutputStream(string_path+file_name);
+    		
+    		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+    		out.close(); 
+    		
+    		return result_path;
+    
+    	}catch(FileNotFoundException exception){
+    		Log.e("FileNotFoundException", exception.getMessage());
+    	}catch(IOException exception){
+    		Log.e("IOException", exception.getMessage());
+    	}
+    	
+    	return "error";
+    	
+    }
+	
+	
+	private String getDate(long time) {
+	    Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+	    cal.setTimeInMillis(time);
+	    String date = DateFormat.format("ssmmHHddMMyyyy", cal).toString();
+	    Log.i("timeOhdoing",date);
+	    return date;
+	}
+	
+	
 
 	/*
 	 * protected void onActivityResult(int requestCode, int resultCode, Intent
@@ -530,7 +653,7 @@ public class ListActivity extends Activity {
 		final LinearLayout setPasswordLinear = (LinearLayout) View.inflate(
 				ListActivity.this, R.layout.set_pass_word, null);
 		new AlertDialog.Builder(ListActivity.this).setTitle("비밀번호 설정")
-				.setIcon(R.drawable.floating_img2).setView(setPasswordLinear)
+				.setIcon(R.drawable.floating_img3).setView(setPasswordLinear)
 				.setCancelable(true).setPositiveButton("닫기", null)
 				.setNegativeButton("저장", new DialogInterface.OnClickListener() {
 					EditText pwd1 = (EditText) setPasswordLinear
@@ -582,7 +705,7 @@ public class ListActivity extends Activity {
 		final LinearLayout password_linear = (LinearLayout) View.inflate(
 				ListActivity.this, R.layout.pass_word, null);
 		new AlertDialog.Builder(ListActivity.this).setTitle("추가페이지")
-				.setIcon(R.drawable.floating_img2).setView(password_linear)
+				.setIcon(R.drawable.floating_img3).setView(password_linear)
 				.setCancelable(true).setPositiveButton("닫기", null)
 				.setNegativeButton("확인", new DialogInterface.OnClickListener() {
 					EditText pwd = (EditText) password_linear
@@ -597,7 +720,7 @@ public class ListActivity extends Activity {
 											R.layout.final_page, null);
 							new AlertDialog.Builder(ListActivity.this)
 									.setTitle("추가페이지")
-									.setIcon(R.drawable.floating_img)
+									.setIcon(R.drawable.floating_img3)
 									.setView(linear).setCancelable(true)
 									.setPositiveButton("닫기", null).show();
 						}
@@ -614,7 +737,7 @@ public class ListActivity extends Activity {
 		final LinearLayout linear = (LinearLayout) View.inflate(
 				ListActivity.this, R.layout.final_page, null);
 		new AlertDialog.Builder(ListActivity.this).setTitle("추가페이지")
-				.setIcon(R.drawable.floating_img2).setView(linear)
+				.setIcon(R.drawable.floating_img3).setView(linear)
 				.setCancelable(true).setPositiveButton("닫기", null).show();
 	}
 
@@ -665,7 +788,7 @@ public class ListActivity extends Activity {
 //						galleryContext.getResources(), l.get(i).getImg());
 //				placeholder = BitmapFactory.decodeFile(l.get(i).getImg());
 				placeholder = BitmapFactory.decodeResource(
-						galleryContext.getResources(),R.drawable.redcard);
+						galleryContext.getResources(),R.drawable.realcard);
 				imageBitmaps[i] = placeholder;
 
 			}
@@ -751,6 +874,73 @@ public class ListActivity extends Activity {
      	}
      	return super.onKeyDown(keyCode, event);
 }*/
+	
+
+	/**************************************************************
+	 * getting from com.google.zxing.client.android.encode.QRCodeEncoder
+	 * 
+	 * See the sites below http://code.google.com/p/zxing/
+	 * http://code.google.com
+	 * /p/zxing/source/browse/trunk/android/src/com/google/
+	 * zxing/client/android/encode/EncodeActivity.java
+	 * http://code.google.com/p/zxing
+	 * /source/browse/trunk/android/src/com/google/
+	 * zxing/client/android/encode/QRCodeEncoder.java
+	 * 
+	 * 쉽게말해서 바코드 만들어주는 코드
+	 */
+
+	private static final int WHITE = 0xFFFFFFFF;
+	private static final int BLACK = 0xFF000000;
+
+	Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int img_width,
+			int img_height) throws WriterException {
+		String contentsToEncode = contents;
+		if (contentsToEncode == null) {
+			return null;
+		}
+		Map<EncodeHintType, Object> hints = null;
+		String encoding = guessAppropriateEncoding(contentsToEncode);
+		if (encoding != null) {
+			hints = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+			hints.put(EncodeHintType.CHARACTER_SET, encoding);
+		}
+		MultiFormatWriter writer = new MultiFormatWriter();
+		BitMatrix result;
+		try {
+			result = writer.encode(contentsToEncode, format, img_width,
+					img_height, hints);
+		} catch (IllegalArgumentException iae) {
+			// Unsupported format
+			return null;
+		}
+		int width = result.getWidth();
+		int height = result.getHeight();
+		int[] pixels = new int[width * height];
+		for (int y = 0; y < height; y++) {
+			int offset = y * width;
+			for (int x = 0; x < width; x++) {
+				pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
+			}
+		}
+
+		Bitmap bitmap = Bitmap.createBitmap(width, height,
+				Bitmap.Config.ARGB_8888);
+		bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+		return bitmap;
+	}
+
+	private static String guessAppropriateEncoding(CharSequence contents) {
+		// Very crude at the moment
+		for (int i = 0; i < contents.length(); i++) {
+			if (contents.charAt(i) > 0xFF) {
+				return "UTF-8";
+			}
+		}
+		return null;
+	}
+
+	
 	/*
 	 * ETC
 	 */

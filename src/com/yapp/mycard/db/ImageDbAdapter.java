@@ -100,7 +100,7 @@ public class ImageDbAdapter {
 
 			int id = result.getInt(0);
 			String name = result.getString(1);
-			Integer cardName = Integer.parseInt(result.getString(2));
+			Long cardName = Long.parseLong(result.getString(2));
 			String img2 = result.getString(3);
 			// String img2 = result.getString(3);
 			boolean secure = Boolean.parseBoolean(result.getString(4));
@@ -130,7 +130,7 @@ public class ImageDbAdapter {
 				Image img = new Image();
 				img.setId(result.getInt(0));
 				img.setName(result.getString(1));
-				img.setCardName(Integer.parseInt(result.getString(2)));
+				img.setCardName(Long.parseLong(result.getString(2)));
 				img.setImg(result.getString(3));
 				Log.i("dbohdoking",result.getString(3));
 				img.setSecure(Boolean.parseBoolean(result.getString(4)));

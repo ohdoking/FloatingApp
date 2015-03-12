@@ -28,7 +28,7 @@ public class FloatingFaceBubbleService extends Service {
         super.onCreate();
         floatingFaceBubble = new ImageView(this);
         //a face floating bubble as imageView
-        floatingFaceBubble.setImageResource(R.drawable.floating_img2); 
+        floatingFaceBubble.setImageResource(R.drawable.floating_img3); 
 
         windowManager = (WindowManager)getSystemService(WINDOW_SERVICE);
         //here is all the science of params
