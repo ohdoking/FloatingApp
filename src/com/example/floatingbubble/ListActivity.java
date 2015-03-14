@@ -108,7 +108,7 @@ public class ListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		
+		Log.i("test","test");
 		
 		setContentView(R.layout.activity_list_acitivity);
 
