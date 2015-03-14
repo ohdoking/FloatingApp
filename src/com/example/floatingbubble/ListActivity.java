@@ -108,8 +108,8 @@ public class ListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		
-		
+		Log.i("test","masterTest");
+		Log.i("test","masterTest1");
 		setContentView(R.layout.activity_list_acitivity);
 
 		img = new Image();
