@@ -86,7 +86,6 @@ public class ListActivity extends Activity {
 
 	public Image img;
 	public ImageDbAdapter imageDb;
-	public SecurityDbAdapter securityDb;
 
 	ArrayList<Image> l;
 
@@ -109,20 +108,20 @@ public class ListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-//		getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, 
-//                WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
 		
 		
 		setContentView(R.layout.activity_list_acitivity);
 
 		img = new Image();
 		imageDb = new ImageDbAdapter(this);
-		securityDb = new SecurityDbAdapter(this);
 
 		l = new ArrayList<Image>();
 
 		ids();
 		listUpdate("selectAll");
+		
+		
+		
 		// Add Card
 		addCard.setOnClickListener(addImageClicked);
 		
@@ -138,23 +137,12 @@ public class ListActivity extends Activity {
 	}
 
 	public void ids() {
-		// linear = (LinearLayout) View.inflate(
-		// ListActivity.this, R.layout.add_alert, null);
-		// get the large image view
 
-		// LayoutInflater linf = LayoutInflater.from(this);
-		// linear = linf.inflate(R.layout.add_alert, null);
-
-		// get the large image view
 		picView = (ImageView) findViewById(R.id.picture);
-		// get the gallery view
 		picGallery = (Gallery) findViewById(R.id.gallery);
 		currentCardName = (TextView)findViewById(R.id.cuurentCardName);
-
 		addCard = (Button) findViewById(R.id.addCard);
 		closeWindows = (Button) findViewById(R.id.closeWindows);
-
-		// result = (TextView) findViewById(R.id.result);
 		
 	}
 
@@ -679,7 +667,6 @@ public class ListActivity extends Activity {
 									.show();
 							temppwd = Integer.parseInt(pwd1.getText()
 									.toString());
-							securityDb.insert(securityTemp);
 							// 비밀번호가 저장되는 부분!
 							// setContentView(R.layout.activity_list_acitivity);
 							// ImageView img =

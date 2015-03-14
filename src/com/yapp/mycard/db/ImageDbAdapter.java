@@ -37,19 +37,16 @@ public class ImageDbAdapter {
 
 	public long insert(Image img) {
 
-		db = helper.getWritableDatabase(); // db ��ü�� ���´�. ���� ����
+		db = helper.getWritableDatabase();
 		Long l;
 		ContentValues values = new ContentValues();
-		// db.insert�� �Ű������� values�� ContentValues �����̹Ƿ� �׿� ����
 		values.put("name", img.getName());
 		values.put("card_name", img.getCardName());
-		// values.put("etc", img.getEtc());
 		values.put("etc", "test");
 		values.put("secure", img.isSecure());
-		// values.put("img", img.getImg());
 		values.put("img", img.getImg());
 
-		l = db.insert("image", null, values); // ���̺�/���÷���/������(���÷���=����Ʈ)
+		l = db.insert("image", null, values); 
 
 		return l; // tip : ���콺�� db.insert�� �÷����� �Ű������� � ���� �;� �ϴ��� �� �� �ִ�.
 
@@ -79,7 +76,6 @@ public class ImageDbAdapter {
 
 		db = helper.getWritableDatabase();
 		db.delete("image", "card_name=" + img.getCardName(), null);
-		Log.i("db", img.getCardName() + "���������� ���� �Ǿ���ϴ�.");
 
 	}
 
@@ -161,12 +157,10 @@ public class ImageDbAdapter {
 	
 	
 	public boolean checkedPassword(){
-		//TODO ��� ��ȣ üũ(�α��� ����)
 		return true;
 	}
 
 	public boolean isCheckPassword() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
