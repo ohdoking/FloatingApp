@@ -110,6 +110,8 @@ public class ListActivity extends Activity {
 		
 		Log.i("test","masterTest");
 		Log.i("test","masterTest1");
+
+		Log.i("test","SOOLIN BRANCH TEST1");
 		setContentView(R.layout.activity_list_acitivity);
 
 		img = new Image();
