@@ -12,6 +12,13 @@
         android:layout_marginBottom="50px"
         android:layout_marginTop="20px"
         android:src="@drawable/pinkcard" />
+    
+    
+     <TextView
+         android:id="@+id/imgText"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
   
 </LinearLayout>

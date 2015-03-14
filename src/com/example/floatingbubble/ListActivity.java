@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.format.DateFormat;
@@ -73,7 +74,8 @@ public class ListActivity extends Activity {
 	private EditText cardnum;
 	private CheckBox secure;
 	private ImageView addCardimg;
-
+	private TextView currentCardName;
+	
 	private ImageView editCarding;
 	private EditText nameEdit;
 	private EditText cardnumEdit;
@@ -147,12 +149,12 @@ public class ListActivity extends Activity {
 		picView = (ImageView) findViewById(R.id.picture);
 		// get the gallery view
 		picGallery = (Gallery) findViewById(R.id.gallery);
+		currentCardName = (TextView)findViewById(R.id.cuurentCardName);
 
 		addCard = (Button) findViewById(R.id.addCard);
 		closeWindows = (Button) findViewById(R.id.closeWindows);
 
 		// result = (TextView) findViewById(R.id.result);
-
 		
 	}
 
@@ -175,6 +177,7 @@ public class ListActivity extends Activity {
 			
 			
 			final ImageView tempImg = (ImageView) linear2.findViewById(R.id.imgTest);
+			final TextView tempText = (TextView)linear2.findViewById(R.id.imgText);
 			// set the larger image view to display the chosen bitmap calling
 			// picView.setImageBitmap(imgAdapt.getPic(position));
 			// result.setText( imgAdapt.getImage(position).getName());
@@ -187,7 +190,11 @@ public class ListActivity extends Activity {
 
 			final Image selectImg = imgAdapt.getImage(position);
 			
+//			currentCardName.setText(selectImg.getName());
+			imgAdapt.notifyDataSetChanged();
+			
               	tempImg.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
+              	tempText.setText(String.valueOf(selectImg.getCardName()));
               	
               	tempImg.setOnClickListener(new OnClickListener() {
 					
@@ -318,7 +325,6 @@ public class ListActivity extends Activity {
 			 */
 
 			// 키 얼럴트 창이 떠오른다!!!!
-			
 			editLayer = (LinearLayout) View.inflate(ListActivity.this,
 					R.layout.edit_alert, null);
 			editCarding = (ImageView) editLayer.findViewById(R.id.editCardimg);
@@ -451,6 +457,7 @@ public class ListActivity extends Activity {
 				imgAdapt = new PicAdapter(this, l);
 			} else {
 				picGallery.setBackgroundResource(R.drawable.temp_id);
+				
 			}
 		} else if (name.equals("delete")) {
 
@@ -790,6 +797,10 @@ public class ListActivity extends Activity {
 				placeholder = BitmapFactory.decodeResource(
 						galleryContext.getResources(),R.drawable.realcard);
 				imageBitmaps[i] = placeholder;
+				
+				
+			
+				
 
 			}
 
@@ -828,14 +839,18 @@ public class ListActivity extends Activity {
 			ImageView imageView = new ImageView(galleryContext);
 			// specify the bitmap at this position in the array
 			imageView.setImageBitmap(imageBitmaps[position]);
+			
 			// set layout options
 			imageView.setLayoutParams(new Gallery.LayoutParams(600, 450));
 			// scale type within view area
 			imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 			// set default gallery item background
 			// imageView.setBackgroundResource(defaultItemBackground);
-
 			// return the view
+				
+				currentCardName.setTextColor(Color.WHITE);
+//				currentCardName.setText(getImage(position).getName());
+
 			return imageView;
 		}
 
