@@ -41,7 +41,7 @@ public class ImageDbAdapter {
 		Long l;
 		ContentValues values = new ContentValues();
 		values.put("name", img.getName());
-		values.put("card_name", img.getCardName());
+		values.put("card_name", img.getCardNum());
 		values.put("etc", "test");
 		values.put("secure", img.isSecure());
 		values.put("img", img.getImg());
@@ -54,18 +54,19 @@ public class ImageDbAdapter {
 
 	// update
 
-	public void update(Image img, Integer cardNum) {
+	public void update(Image img, Long cardNum) {
 
 		db = helper.getWritableDatabase(); // db ��ü�� ���´�. ���Ⱑ��
 
 		ContentValues values = new ContentValues();
 
 		values.put("name", img.getName());
-		values.put("card_name", img.getCardName());
+		values.put("card_name", img.getCardNum());
 		values.put("etc", img.getEtc());
 		values.put("secure", img.isSecure());
-//		values.put("img", R.drawable.mintcard);
+		values.put("img", img.getImg());
 
+		Log.i("ohdoking",String.valueOf(cardNum));
 		db.update("image", values, "card_name=" + cardNum, null);
 
 	}
@@ -75,7 +76,7 @@ public class ImageDbAdapter {
 	public void delete(Image img) {
 
 		db = helper.getWritableDatabase();
-		db.delete("image", "card_name=" + img.getCardName(), null);
+		db.delete("image", "card_name=" + img.getCardNum(), null);
 
 	}
 
@@ -104,7 +105,7 @@ public class ImageDbAdapter {
 
 			img.setId(id);
 			img.setName(name);
-			img.setCardName(cardName);
+			img.setCardNum(cardName);
 			img.setSecure(secure);
 			img.setEtc(etc);
 			img.setImg(img2);
@@ -126,7 +127,7 @@ public class ImageDbAdapter {
 				Image img = new Image();
 				img.setId(result.getInt(0));
 				img.setName(result.getString(1));
-				img.setCardName(Long.parseLong(result.getString(2)));
+				img.setCardNum(Long.parseLong(result.getString(2)));
 				img.setImg(result.getString(3));
 				Log.i("dbohdoking",result.getString(3));
 				img.setSecure(Boolean.parseBoolean(result.getString(4)));

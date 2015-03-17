@@ -5,7 +5,7 @@ public class Image {
 
 	int id;
 	String name;
-	Long cardName;
+	Long cardNum;
 	String img;
 	boolean secure;
 	String etc;
@@ -36,11 +36,11 @@ public class Image {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Long getCardName() {
-		return cardName;
+	public Long getCardNum() {
+		return cardNum;
 	}
-	public void setCardName(Long cardName) {
-		this.cardName = cardName;
+	public void setCardNum(Long cardNum) {
+		this.cardNum = cardNum;
 	}
 
 	public boolean isSecure() {

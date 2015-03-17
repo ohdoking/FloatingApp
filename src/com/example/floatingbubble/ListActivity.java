@@ -20,10 +20,12 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +33,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -55,7 +62,7 @@ import com.yapp.mycard.dto.Image;
 import com.yapp.mycard.dto.Security;
 import com.yapp.mycard.word.Word;
 
-public class ListActivity extends Activity {
+public class ListActivity extends Activity implements AdapterView.OnItemSelectedListener{
 	static int temppwd;
 	// variable for selection intent
 	private final int PICKER = 1;
@@ -108,7 +115,6 @@ public class ListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		Log.i("test","1");
 		setContentView(R.layout.activity_list_acitivity);
 
 		img = new Image();
@@ -120,6 +126,8 @@ public class ListActivity extends Activity {
 		listUpdate("selectAll");
 		
 		
+	        
+		
 		
 		// Add Card
 		addCard.setOnClickListener(addImageClicked);
@@ -127,10 +135,10 @@ public class ListActivity extends Activity {
 		// Edit Card
 		picGallery.setAdapter(imgAdapt);
 		picGallery.setOnItemLongClickListener(editImageClicked);
-
+		
 		// set the click listener for each item in the thumbnail gallery
 		picGallery.setOnItemClickListener(showCard);
-
+		picGallery.setOnItemSelectedListener(this);
 		closeWindows.setOnClickListener(historyBack);
 
 	}
@@ -181,7 +189,7 @@ public class ListActivity extends Activity {
 			imgAdapt.notifyDataSetChanged();
 			
               	tempImg.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
-              	tempText.setText(String.valueOf(selectImg.getCardName()));
+              	tempText.setText(String.valueOf(selectImg.getCardNum()));
               	
               	tempImg.setOnClickListener(new OnClickListener() {
 					
@@ -261,7 +269,7 @@ public class ListActivity extends Activity {
 										int which) {
 
 									imgTemp.setName(name.getText().toString());
-									imgTemp.setCardName(Long
+									imgTemp.setCardNum(Long
 											.parseLong(cardnum.getText()
 													.toString()));
 									imgTemp.setSecure(secure.isChecked());
@@ -320,6 +328,7 @@ public class ListActivity extends Activity {
 			secureEdit = (CheckBox) editLayer.findViewById(R.id.editcheckSecure);
 			
 			editCarding.setOnClickListener(editImage);
+			final Long beforeValue =  selectImg.getCardNum();
 
 
 			al = new AlertDialog.Builder(ListActivity.this)
@@ -352,19 +361,16 @@ public class ListActivity extends Activity {
 									Toast.makeText(ListActivity.this,
 											"modify!!", Toast.LENGTH_SHORT)
 											.show();
-
 									Image tempImg = new Image();
 									tempImg.setName(nameEdit.getText()
 											.toString());
-									tempImg.setCardName(Long
+									tempImg.setCardNum(Long
 											.valueOf(cardnumEdit.getText()
 													.toString()));
 									tempImg.setSecure(secureEdit.isChecked());
 									//TODO 이미지 업데이트시 생각
-//									tempImg.setImg(selectImg.getImg());
-									imageDb.update(tempImg, Integer
-											.valueOf(cardnumEdit.getText()
-													.toString()));
+									tempImg.setImg(Word.IMG);
+									imageDb.update(tempImg, beforeValue);
 
 									refresh();
 
@@ -390,7 +396,7 @@ public class ListActivity extends Activity {
 			Log.d("carnum", String.valueOf(selectImg.isSecure()));
 
 			nameEdit.setText(selectImg.getName());
-			cardnumEdit.setText(String.valueOf(selectImg.getCardName()));
+			cardnumEdit.setText(String.valueOf(selectImg.getCardNum()));
 			secureEdit.setChecked(selectImg.isSecure());
 			editCarding.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
 
@@ -829,10 +835,20 @@ public class ListActivity extends Activity {
 			// specify the bitmap at this position in the array
 			imageView.setImageBitmap(imageBitmaps[position]);
 			
+			Display display = getWindowManager().getDefaultDisplay();
+			Point size = new Point();
+			display.getSize(size);
+			int width = size.x;
+			int height = size.y;
+			
 			// set layout options
-			imageView.setLayoutParams(new Gallery.LayoutParams(600, 450));
+			imageView.setLayoutParams(new Gallery.LayoutParams(width/2, height/4));
 			// scale type within view area
 			imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+			
+
+
+			
 			// set default gallery item background
 			// imageView.setBackgroundResource(defaultItemBackground);
 			// return the view
@@ -966,5 +982,19 @@ public class ListActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int pos,
+			long arg3) {
+		
+		currentCardName.setText( imgAdapt.getImage(pos).getName());
+		
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		currentCardName.setText("test");
+		
 	}
 }
