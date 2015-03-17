@@ -987,7 +987,7 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 	@Override
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int pos,
 			long arg3) {
-		Log.i("test","testIssueclose");
+		Log.i("test","testIssueclose1");
 		currentCardName.setText( imgAdapt.getImage(pos).getName());
 		
 	}
