@@ -375,7 +375,6 @@ public class ListActivity extends Activity {
 					.show();
 			
 			al.setOnKeyListener(new Dialog.OnKeyListener() {
-
 	            @Override
 	            public boolean onKey(DialogInterface arg0, int keyCode,
 	                    KeyEvent event) {
@@ -413,8 +412,12 @@ public class ListActivity extends Activity {
 					android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
 			startActivityForResult(i, RESULT_LOAD_IMAGE);
+			
+			
 */		
 			Intent i = new Intent("com.google.zxing.client.android.SCAN");
+//			Intent i = new Intent(ListActivity.this,CaptureActivity.class);
+//			i.putExtra("SCAN_MODE", "QR_CODE_MODE");
 			
 			startActivityForResult(i, 0);
 			
