@@ -21,8 +21,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Display;
@@ -109,6 +112,9 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 	public AlertDialog alShowDialog;
 	
 	Bitmap bitmap = null;
+	
+	private Button buttonAdd;
+	private Button buttonEdit;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +146,14 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 		picGallery.setOnItemClickListener(showCard);
 		picGallery.setOnItemSelectedListener(this);
 		closeWindows.setOnClickListener(historyBack);
+		
+
+		
+		
+		
+		
+	    
+	    
 
 	}
 
@@ -253,6 +267,13 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 			cardnum = (EditText) linear.findViewById(R.id.addtextCardNum);
 			secure = (CheckBox) linear.findViewById(R.id.addcheckSecure);
 			
+			
+			TextWatcher watcher = new LocalTextWatcher();
+			name.addTextChangedListener(watcher);
+			cardnum.addTextChangedListener(watcher);
+
+		  
+		    
 
 			addCardimg.setOnClickListener(addImage);
 			// 키 얼럴트 창이 떠오른다!!!!
@@ -275,49 +296,42 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 									imgTemp.setSecure(secure.isChecked());
 									imgTemp.setImg(Word.IMG);
 									
-									String.valueOf(imageDb.insert(imgTemp));
+									
+									if(!name.getText().toString().equals("") 
+											|| !cardnum.getText().toString().equals("")
+											|| !Word.IMG.equals(""))
+									{
+										
+										String.valueOf(imageDb.insert(imgTemp));
+									}
 
 									refresh();
 									alAddDialog.dismiss();
 
 								}
 							}).show();
+			
+			buttonAdd = alAddDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+			  updateButtonState();
 
+		
 		}
 	};
+	
+	
+	
+	
+	
+	
 	public OnItemLongClickListener editImageClicked = new OnItemLongClickListener() {
 
 		// handle long clicks
 		public boolean onItemLongClick(AdapterView<?> parent, View v,
 				int position, long id) {
-			//
-			// editLayer = (LinearLayout) View.inflate(
-			// ListActivity.this, R.layout.edit_alert, null);
 
 			final int pos = position;
-
 			final Image selectImg = imgAdapt.getImage(pos);
 
-			// Context context = getApplicationContext();
-			// CharSequence text = "Hello toast!";
-			// int duration = Toast.LENGTH_SHORT;
-			//
-			// Toast.makeText(context, String.valueOf(id), duration).show();
-			// update the currently selected position so that we assign the
-			// imported bitmap to correct item
-			/*
-			 * currentPic = position;
-			 * 
-			 * //take the user to their chosen image selection app (gallery or
-			 * file manager) Intent pickIntent = new Intent();
-			 * pickIntent.setType("image/*");
-			 * pickIntent.setAction(Intent.ACTION_GET_CONTENT); //we will handle
-			 * the returned data in onActivityResult
-			 * startActivityForResult(Intent.createChooser(pickIntent,
-			 * "Select Picture"), PICKER);
-			 * 
-			 * return true;
-			 */
 
 			// 키 얼럴트 창이 떠오른다!!!!
 			editLayer = (LinearLayout) View.inflate(ListActivity.this,
@@ -464,6 +478,8 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		
+
 		
 		if (requestCode == 0 || requestCode == 1) {
 		      if (resultCode == RESULT_OK) {
@@ -984,6 +1000,12 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 		return super.onOptionsItemSelected(item);
 	}
 
+	
+	/**
+	 * 
+	 * 
+	 * 겔러리에서 카드 변경시 글자도 바뀌게 하는 소스
+	 */
 	@Override
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int pos,
 			long arg3) {
@@ -997,4 +1019,50 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 		currentCardName.setText("test");
 		
 	}
+	
+	
+	/**
+	 * 
+	 * button edittext 비었을때 enable / able 처리
+	 * @author ohdoking
+	 *
+	 */
+	
+	private class LocalTextWatcher implements TextWatcher {
+	    public void afterTextChanged(Editable s) {
+	        updateButtonState();
+	    }
+
+	    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+	    }
+
+	    public void onTextChanged(CharSequence s, int start, int before, int count) {
+	    }
+	}
+	
+	
+	
+
+	private boolean checkEditText(EditText edit) {
+	    return edit.getText().length() == 0;
+	}
+	/*private boolean checkImageView(ImageView edit) {
+		
+		Log.i("ohdoking",edit.getTag() + ": ) : " + getResources().getDrawable(R.drawable.pinkcard));
+	    return edit.getDrawable() == getResources().getDrawable(R.drawable.pinkcard);
+	}
+	
+	void updateButtonState() {
+	    if(checkEditText(name) || checkEditText(cardnum) || checkImageView(addCardimg)) buttonAdd.setEnabled(false);
+	    else buttonAdd.setEnabled(true);
+	    
+	    Log.i("ohdoking",String.valueOf(checkImageView(addCardimg)));
+	}*/
+	void updateButtonState() {
+	    if(checkEditText(name) || checkEditText(cardnum) ) buttonAdd.setEnabled(false);
+	    else buttonAdd.setEnabled(true);
+	    
+	}
+	
+	
 }
