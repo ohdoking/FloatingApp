@@ -115,6 +115,8 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 	
 	private Button buttonAdd;
 	private Button buttonEdit;
+	
+	public String Check;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -204,7 +206,7 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 			
               	tempImg.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
               	tempText.setText(String.valueOf(selectImg.getCardNum()));
-              	
+            /*  	
               	tempImg.setOnClickListener(new OnClickListener() {
 					
 					@Override
@@ -239,7 +241,7 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 						
 					}
 				});
-			
+*/			
 
 	        
 		
@@ -265,14 +267,13 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 			addCardimg = (ImageView) linear.findViewById(R.id.addCardimg);
 			name = (EditText) linear.findViewById(R.id.addtextCardName);
 			cardnum = (EditText) linear.findViewById(R.id.addtextCardNum);
-			secure = (CheckBox) linear.findViewById(R.id.addcheckSecure);
+//			secure = (CheckBox) linear.findViewById(R.id.addcheckSecure);
 			
 			
 			TextWatcher watcher = new LocalTextWatcher();
 			name.addTextChangedListener(watcher);
 			cardnum.addTextChangedListener(watcher);
 
-		  
 		    
 
 			addCardimg.setOnClickListener(addImage);
@@ -293,7 +294,8 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 									imgTemp.setCardNum(Long
 											.parseLong(cardnum.getText()
 													.toString()));
-									imgTemp.setSecure(secure.isChecked());
+//									imgTemp.setSecure(secure.isChecked());
+									imgTemp.setSecure(true);
 									imgTemp.setImg(Word.IMG);
 									
 									
@@ -339,7 +341,11 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 			editCarding = (ImageView) editLayer.findViewById(R.id.editCardimg);
 			nameEdit = (EditText) editLayer.findViewById(R.id.edittextCardName);
 			cardnumEdit = (EditText) editLayer.findViewById(R.id.edittextCardNum);
-			secureEdit = (CheckBox) editLayer.findViewById(R.id.editcheckSecure);
+//			secureEdit = (CheckBox) editLayer.findViewById(R.id.editcheckSecure);
+
+			
+			
+			
 			
 			editCarding.setOnClickListener(editImage);
 			final Long beforeValue =  selectImg.getCardNum();
@@ -372,19 +378,41 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									Toast.makeText(ListActivity.this,
-											"modify!!", Toast.LENGTH_SHORT)
-											.show();
 									Image tempImg = new Image();
 									tempImg.setName(nameEdit.getText()
 											.toString());
 									tempImg.setCardNum(Long
 											.valueOf(cardnumEdit.getText()
 													.toString()));
-									tempImg.setSecure(secureEdit.isChecked());
-									//TODO 이미지 업데이트시 생각
+//									tempImg.setSecure(secureEdit.isChecked());
+									tempImg.setSecure(true);
 									tempImg.setImg(Word.IMG);
-									imageDb.update(tempImg, beforeValue);
+									
+
+											
+									if(!cardnumEdit.getText().toString().equals(String.valueOf(selectImg.getCardNum())) 
+											|| !nameEdit.getText().toString().equals(selectImg.getName()))
+									{
+										
+										if(cardnumEdit.getText().toString().equals(String.valueOf(selectImg.getCardNum())) )
+										{
+											
+											imageDb.update(tempImg, beforeValue);
+										}
+												
+										imageDb.update(tempImg, beforeValue);
+										Toast.makeText(ListActivity.this,
+												"수정되었습니다..", Toast.LENGTH_SHORT)
+												.show();
+									}
+									else
+									{
+										Toast.makeText(ListActivity.this,
+												"변경된 사항이 없습니다.", Toast.LENGTH_SHORT)
+												.show();
+									}
+									
+									
 
 									refresh();
 
@@ -403,17 +431,18 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 //	                    finish();
 	                    al.dismiss();
 	                }
-	                return true;
+	                return false;
 	            }
 	        });
 
-			Log.d("carnum", String.valueOf(selectImg.isSecure()));
 
+			
 			nameEdit.setText(selectImg.getName());
 			cardnumEdit.setText(String.valueOf(selectImg.getCardNum()));
-			secureEdit.setChecked(selectImg.isSecure());
+//			secureEdit.setChecked(selectImg.isSecure());
 			editCarding.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
 
+			  
 			return true;
 
 		}
@@ -436,7 +465,6 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 			
 */		
 			Intent i = new Intent("com.google.zxing.client.android.SCAN");
-//			Intent i = new Intent(ListActivity.this,CaptureActivity.class);
 //			i.putExtra("SCAN_MODE", "QR_CODE_MODE");
 			
 			startActivityForResult(i, 0);
@@ -450,7 +478,6 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 		@Override
 		public void onClick(View v) {
 			Intent i = new Intent("com.google.zxing.client.android.SCAN");
-			Log.i("??","여기요");
 			startActivityForResult(i, 1);
 			
 		
@@ -1046,6 +1073,9 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 	private boolean checkEditText(EditText edit) {
 	    return edit.getText().length() == 0;
 	}
+	private boolean checkUpdateEditText(EditText edit) {
+	    return edit.getText().length() == 0;
+	}
 	/*private boolean checkImageView(ImageView edit) {
 		
 		Log.i("ohdoking",edit.getTag() + ": ) : " + getResources().getDrawable(R.drawable.pinkcard));
@@ -1059,9 +1089,13 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 	    Log.i("ohdoking",String.valueOf(checkImageView(addCardimg)));
 	}*/
 	void updateButtonState() {
-	    if(checkEditText(name) || checkEditText(cardnum) ) buttonAdd.setEnabled(false);
-	    else buttonAdd.setEnabled(true);
+			
+			if(checkEditText(name) || checkEditText(cardnum) ) buttonAdd.setEnabled(false);
+			else buttonAdd.setEnabled(true);
+		
 	    
+	    
+
 	}
 	
 	

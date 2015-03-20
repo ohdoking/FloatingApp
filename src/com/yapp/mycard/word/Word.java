@@ -9,4 +9,5 @@ public class Word {
 	public static String SECURITY_DB = "security";
 	
 	public static String IMG;
+	
 }

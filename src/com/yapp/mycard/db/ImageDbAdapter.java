@@ -129,7 +129,6 @@ public class ImageDbAdapter {
 				img.setName(result.getString(1));
 				img.setCardNum(Long.parseLong(result.getString(2)));
 				img.setImg(result.getString(3));
-				Log.i("dbohdoking",result.getString(3));
 				img.setSecure(Boolean.parseBoolean(result.getString(4)));
 				img.setEtc(result.getString(5));
 
