@@ -20,8 +20,10 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.hardware.Camera.Parameters;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
@@ -30,24 +32,30 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -65,7 +73,8 @@ import com.yapp.mycard.dto.Image;
 import com.yapp.mycard.dto.Security;
 import com.yapp.mycard.word.Word;
 
-public class ListActivity extends Activity implements AdapterView.OnItemSelectedListener{
+public class ListActivity extends Activity implements
+		AdapterView.OnItemSelectedListener {
 	static int temppwd;
 	// variable for selection intent
 	private final int PICKER = 1;
@@ -85,12 +94,12 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 	private CheckBox secure;
 	private ImageView addCardimg;
 	private TextView currentCardName;
-	
+
 	private ImageView editCarding;
 	private EditText nameEdit;
 	private EditText cardnumEdit;
 	private CheckBox secureEdit;
-	
+
 	private ImageView showBigImg;
 	private TextView result;
 
@@ -110,20 +119,29 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 	public AlertDialog al;
 	public AlertDialog alAddDialog;
 	public AlertDialog alShowDialog;
-	
+
 	Bitmap bitmap = null;
-	
+
 	private Button buttonAdd;
 	private Button buttonEdit;
-	
+
 	public String Check;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		
+
 		setContentView(R.layout.activity_list_acitivity);
+
+		Display display = getWindowManager().getDefaultDisplay();
+		Point point = new Point();
+		display.getSize(point);
+
+		View content = getWindow().getDecorView().findViewById(
+				android.R.id.content);
+		content.setLayoutParams(new FrameLayout.LayoutParams(point.x,
+				LayoutParams.WRAP_CONTENT));
 
 		img = new Image();
 		imageDb = new ImageDbAdapter(this);
@@ -132,30 +150,19 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 
 		ids();
 		listUpdate("selectAll");
-		
-		
-	        
-		
-		
+
 		// Add Card
 		addCard.setOnClickListener(addImageClicked);
-		
+
 		// Edit Card
 		picGallery.setAdapter(imgAdapt);
 		picGallery.setOnItemLongClickListener(editImageClicked);
-		
+
 		// set the click listener for each item in the thumbnail gallery
 		picGallery.setOnItemClickListener(showCard);
 		picGallery.setOnItemSelectedListener(this);
-		closeWindows.setOnClickListener(historyBack);
-		
 
-		
-		
-		
-		
-	    
-	    
+		closeWindows.setOnClickListener(historyBack);
 
 	}
 
@@ -163,92 +170,81 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 
 		picView = (ImageView) findViewById(R.id.picture);
 		picGallery = (Gallery) findViewById(R.id.gallery);
-		currentCardName = (TextView)findViewById(R.id.cuurentCardName);
+		currentCardName = (TextView) findViewById(R.id.cuurentCardName);
 		addCard = (Button) findViewById(R.id.addCard);
 		closeWindows = (Button) findViewById(R.id.closeWindows);
-		
+
 	}
 
 	/*
 	 * Click
 	 */
 
-	//카드보기
+	// 카드보기
 	public OnItemClickListener showCard = new OnItemClickListener() {
 		// handle clicks
-		
-		
+
 		public void onItemClick(AdapterView<?> parent, View v, int position,
 				long id) {
 
-			
-			
 			final LinearLayout linear2 = (LinearLayout) View.inflate(
 					ListActivity.this, R.layout.pop_up, null);
-			
-			
-			final ImageView tempImg = (ImageView) linear2.findViewById(R.id.imgTest);
-			final TextView tempText = (TextView)linear2.findViewById(R.id.imgText);
+
+			final ImageView tempImg = (ImageView) linear2
+					.findViewById(R.id.imgTest);
+			final TextView tempText = (TextView) linear2
+					.findViewById(R.id.imgText);
 			// set the larger image view to display the chosen bitmap calling
 			// picView.setImageBitmap(imgAdapt.getPic(position));
 			// result.setText( imgAdapt.getImage(position).getName());
 			alAddDialog = new AlertDialog.Builder(ListActivity.this)
 					.setView(linear2).setCancelable(true).show();
-			
+
 			final int pos = position;
 			final Image imgTemp = null;
-			
 
 			final Image selectImg = imgAdapt.getImage(position);
-			
-//			currentCardName.setText(selectImg.getName());
+
+			// currentCardName.setText(selectImg.getName());
 			imgAdapt.notifyDataSetChanged();
-			
-              	tempImg.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
-              	tempText.setText(String.valueOf(selectImg.getCardNum()));
-            /*  	
-              	tempImg.setOnClickListener(new OnClickListener() {
-					
-					@Override
-					public void onClick(View v) {
-						
-						final LinearLayout linear3 = (LinearLayout) View.inflate(
-								ListActivity.this, R.layout.big_pop_up, null);
-						
-						alShowDialog = new AlertDialog.Builder(ListActivity.this,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-						.setView(linear3).setCancelable(true).show();
-						
-						showBigImg= (ImageView)linear3.findViewById(R.id.bigImg);
-						
-						showBigImg.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
-						
-						alShowDialog.setOnKeyListener(new Dialog.OnKeyListener() {
 
-				            @Override
-				            public boolean onKey(DialogInterface arg0, int keyCode,
-				                    KeyEvent event) {
-				                // TODO Auto-generated method stub
-				                if (keyCode == KeyEvent.KEYCODE_BACK) {
-				                    alShowDialog.dismiss();
-				                    linear3.removeView(linear3);
-//				                    linear3 = (LinearLayout) View.inflate(
-//				        					ListActivity.this, R.layout.big_pop_up, null);
-				                }
-				                return true;
-				            }
-				        });
-						
-						
-					}
-				});
-*/			
+			tempImg.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
+			tempText.setText(String.valueOf(selectImg.getCardNum()));
+			/*
+			 * tempImg.setOnClickListener(new OnClickListener() {
+			 * 
+			 * @Override public void onClick(View v) {
+			 * 
+			 * final LinearLayout linear3 = (LinearLayout) View.inflate(
+			 * ListActivity.this, R.layout.big_pop_up, null);
+			 * 
+			 * alShowDialog = new
+			 * AlertDialog.Builder(ListActivity.this,android.R
+			 * .style.Theme_Black_NoTitleBar_Fullscreen)
+			 * .setView(linear3).setCancelable(true).show();
+			 * 
+			 * showBigImg= (ImageView)linear3.findViewById(R.id.bigImg);
+			 * 
+			 * showBigImg.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg
+			 * ()));
+			 * 
+			 * alShowDialog.setOnKeyListener(new Dialog.OnKeyListener() {
+			 * 
+			 * @Override public boolean onKey(DialogInterface arg0, int keyCode,
+			 * KeyEvent event) { // TODO Auto-generated method stub if (keyCode
+			 * == KeyEvent.KEYCODE_BACK) { alShowDialog.dismiss();
+			 * linear3.removeView(linear3); // linear3 = (LinearLayout)
+			 * View.inflate( // ListActivity.this, R.layout.big_pop_up, null); }
+			 * return true; } });
+			 * 
+			 * 
+			 * } });
+			 */
 
-	        
-		
 		}
 	};
 
-	// x 버튼 누르면 종료 
+	// x 버튼 누르면 종료
 	public OnClickListener historyBack = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -267,14 +263,11 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 			addCardimg = (ImageView) linear.findViewById(R.id.addCardimg);
 			name = (EditText) linear.findViewById(R.id.addtextCardName);
 			cardnum = (EditText) linear.findViewById(R.id.addtextCardNum);
-//			secure = (CheckBox) linear.findViewById(R.id.addcheckSecure);
-			
-			
+			// secure = (CheckBox) linear.findViewById(R.id.addcheckSecure);
+
 			TextWatcher watcher = new LocalTextWatcher();
 			name.addTextChangedListener(watcher);
 			cardnum.addTextChangedListener(watcher);
-
-		    
 
 			addCardimg.setOnClickListener(addImage);
 			// 키 얼럴트 창이 떠오른다!!!!
@@ -291,19 +284,17 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 										int which) {
 
 									imgTemp.setName(name.getText().toString());
-									imgTemp.setCardNum(Long
-											.parseLong(cardnum.getText()
-													.toString()));
-//									imgTemp.setSecure(secure.isChecked());
+									imgTemp.setCardNum(Long.parseLong(cardnum
+											.getText().toString()));
+									// imgTemp.setSecure(secure.isChecked());
 									imgTemp.setSecure(true);
 									imgTemp.setImg(Word.IMG);
-									
-									
-									if(!name.getText().toString().equals("") 
-											|| !cardnum.getText().toString().equals("")
-											|| !Word.IMG.equals(""))
-									{
-										
+
+									if (!name.getText().toString().equals("")
+											|| !cardnum.getText().toString()
+													.equals("")
+											|| !Word.IMG.equals("")) {
+
 										String.valueOf(imageDb.insert(imgTemp));
 									}
 
@@ -312,19 +303,13 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 
 								}
 							}).show();
-			
-			buttonAdd = alAddDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-			  updateButtonState();
 
-		
+			buttonAdd = alAddDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+			updateButtonState();
+
 		}
 	};
-	
-	
-	
-	
-	
-	
+
 	public OnItemLongClickListener editImageClicked = new OnItemLongClickListener() {
 
 		// handle long clicks
@@ -334,22 +319,18 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 			final int pos = position;
 			final Image selectImg = imgAdapt.getImage(pos);
 
-
 			// 키 얼럴트 창이 떠오른다!!!!
 			editLayer = (LinearLayout) View.inflate(ListActivity.this,
 					R.layout.edit_alert, null);
 			editCarding = (ImageView) editLayer.findViewById(R.id.editCardimg);
 			nameEdit = (EditText) editLayer.findViewById(R.id.edittextCardName);
-			cardnumEdit = (EditText) editLayer.findViewById(R.id.edittextCardNum);
-//			secureEdit = (CheckBox) editLayer.findViewById(R.id.editcheckSecure);
+			cardnumEdit = (EditText) editLayer
+					.findViewById(R.id.edittextCardNum);
+			// secureEdit = (CheckBox)
+			// editLayer.findViewById(R.id.editcheckSecure);
 
-			
-			
-			
-			
 			editCarding.setOnClickListener(editImage);
-			final Long beforeValue =  selectImg.getCardNum();
-
+			final Long beforeValue = selectImg.getCardNum();
 
 			al = new AlertDialog.Builder(ListActivity.this)
 					.setTitle("수정 페이지")
@@ -381,38 +362,41 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 									Image tempImg = new Image();
 									tempImg.setName(nameEdit.getText()
 											.toString());
-									tempImg.setCardNum(Long
-											.valueOf(cardnumEdit.getText()
-													.toString()));
-//									tempImg.setSecure(secureEdit.isChecked());
+									tempImg.setCardNum(Long.valueOf(cardnumEdit
+											.getText().toString()));
+									// tempImg.setSecure(secureEdit.isChecked());
 									tempImg.setSecure(true);
 									tempImg.setImg(Word.IMG);
-									
 
-											
-									if(!cardnumEdit.getText().toString().equals(String.valueOf(selectImg.getCardNum())) 
-											|| !nameEdit.getText().toString().equals(selectImg.getName()))
-									{
-										
-										if(cardnumEdit.getText().toString().equals(String.valueOf(selectImg.getCardNum())) )
-										{
-											
+									if (!cardnumEdit
+											.getText()
+											.toString()
+											.equals(String.valueOf(selectImg
+													.getCardNum()))
+											|| !nameEdit
+													.getText()
+													.toString()
+													.equals(selectImg.getName())) {
+
+										if (cardnumEdit
+												.getText()
+												.toString()
+												.equals(String
+														.valueOf(selectImg
+																.getCardNum()))) {
+
 											imageDb.update(tempImg, beforeValue);
 										}
-												
+
 										imageDb.update(tempImg, beforeValue);
 										Toast.makeText(ListActivity.this,
 												"수정되었습니다..", Toast.LENGTH_SHORT)
 												.show();
-									}
-									else
-									{
+									} else {
 										Toast.makeText(ListActivity.this,
-												"변경된 사항이 없습니다.", Toast.LENGTH_SHORT)
-												.show();
+												"변경된 사항이 없습니다.",
+												Toast.LENGTH_SHORT).show();
 									}
-									
-									
 
 									refresh();
 
@@ -421,28 +405,26 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 							})
 
 					.show();
-			
+
 			al.setOnKeyListener(new Dialog.OnKeyListener() {
-	            @Override
-	            public boolean onKey(DialogInterface arg0, int keyCode,
-	                    KeyEvent event) {
-	                // TODO Auto-generated method stub
-	                if (keyCode == KeyEvent.KEYCODE_BACK) {
-//	                    finish();
-	                    al.dismiss();
-	                }
-	                return false;
-	            }
-	        });
+				@Override
+				public boolean onKey(DialogInterface arg0, int keyCode,
+						KeyEvent event) {
+					// TODO Auto-generated method stub
+					if (keyCode == KeyEvent.KEYCODE_BACK) {
+						// finish();
+						al.dismiss();
+					}
+					return false;
+				}
+			});
 
-
-			
 			nameEdit.setText(selectImg.getName());
 			cardnumEdit.setText(String.valueOf(selectImg.getCardNum()));
-//			secureEdit.setChecked(selectImg.isSecure());
-			editCarding.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
+			// secureEdit.setChecked(selectImg.isSecure());
+			editCarding.setImageBitmap(BitmapFactory.decodeFile(selectImg
+					.getImg()));
 
-			  
 			return true;
 
 		}
@@ -453,34 +435,28 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 
 		@Override
 		public void onClick(View v) {
-			
-/*			
- * 갤러리 불러오기
- * Intent i = new Intent(
-					Intent.ACTION_PICK,
-					android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-			startActivityForResult(i, RESULT_LOAD_IMAGE);
-			
-			
-*/		
+			/*
+			 * 갤러리 불러오기 Intent i = new Intent( Intent.ACTION_PICK,
+			 * android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+			 * 
+			 * startActivityForResult(i, RESULT_LOAD_IMAGE);
+			 */
 			Intent i = new Intent("com.google.zxing.client.android.SCAN");
-//			i.putExtra("SCAN_MODE", "QR_CODE_MODE");
-			
+			// i.putExtra("SCAN_MODE", "QR_CODE_MODE");
+
 			startActivityForResult(i, 0);
-			
-		
+
 		}
 	};
-	
+
 	public OnClickListener editImage = new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
 			Intent i = new Intent("com.google.zxing.client.android.SCAN");
 			startActivityForResult(i, 1);
-			
-		
+
 		}
 	};
 
@@ -494,7 +470,7 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 				imgAdapt = new PicAdapter(this, l);
 			} else {
 				picGallery.setBackgroundResource(R.drawable.temp_id);
-				
+
 			}
 		} else if (name.equals("delete")) {
 
@@ -505,121 +481,109 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		
 
-		
 		if (requestCode == 0 || requestCode == 1) {
-		      if (resultCode == RESULT_OK) {
-		         String contents = data.getStringExtra("SCAN_RESULT");
-		         String format = data.getStringExtra("SCAN_RESULT_FORMAT");
-		         BarcodeFormat barcodeFormat = BarcodeFormat.valueOf(format);
-		         
-		         String barcode_data = contents;
-		         
-		     	try {
-		     		
+			if (resultCode == RESULT_OK) {
+				String contents = data.getStringExtra("SCAN_RESULT");
+				String format = data.getStringExtra("SCAN_RESULT_FORMAT");
+				BarcodeFormat barcodeFormat = BarcodeFormat.valueOf(format);
+
+				String barcode_data = contents;
+
+				try {
+
 					bitmap = encodeAsBitmap(barcode_data, barcodeFormat, 600,
 							300);
-					String temS= getDate(System.currentTimeMillis());
+					String temS = getDate(System.currentTimeMillis());
 					String resultPath = null;
-					resultPath = saveBitmaptoJpeg(bitmap,"barcode", "barcode_" + temS);
+					resultPath = saveBitmaptoJpeg(bitmap, "barcode", "barcode_"
+							+ temS);
 					Word.IMG = resultPath;
-					Log.i("resultPathOhdoking",resultPath);
-					
-					
-					if(requestCode == 0)
-					{
-						
+					Log.i("resultPathOhdoking", resultPath);
+
+					if (requestCode == 0) {
+
 						addCardimg.setImageBitmap(bitmap);
 						cardnum.setText(contents);
-					}
-					else if(requestCode == 1)
-					{
+					} else if (requestCode == 1) {
 						editCarding.setImageBitmap(bitmap);
 						cardnumEdit.setText(contents);
-						
-					}
 
+					}
 
 				} catch (WriterException e) {
 					e.printStackTrace();
 				}
-		         
-		         
-		         // Handle successful scan
-		      } else if (resultCode == RESULT_CANCELED) {
-		         // Handle cancel
-		      }
-		   }
 
-		/*if (requestCode == RESULT_LOAD_IMAGE 
-				&& resultCode == RESULT_OK
-				&& null != data) 
-		{
-			Uri selectedImage = data.getData();
-			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+				// Handle successful scan
+			} else if (resultCode == RESULT_CANCELED) {
+				// Handle cancel
+			}
+		}
 
-			Cursor cursor = getContentResolver().query(selectedImage,
-					filePathColumn, null, null, null);
-			cursor.moveToFirst();
-
-			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-			String picturePath = cursor.getString(columnIndex);
-
-			// gallaryImg = picturePat;
-			Word.IMG = picturePath;
-			cursor.close();
-			addCardimg.setImageBitmap(BitmapFactory.decodeFile(Word.IMG));
-
-		}*/
+		/*
+		 * if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK &&
+		 * null != data) { Uri selectedImage = data.getData(); String[]
+		 * filePathColumn = { MediaStore.Images.Media.DATA };
+		 * 
+		 * Cursor cursor = getContentResolver().query(selectedImage,
+		 * filePathColumn, null, null, null); cursor.moveToFirst();
+		 * 
+		 * int columnIndex = cursor.getColumnIndex(filePathColumn[0]); String
+		 * picturePath = cursor.getString(columnIndex);
+		 * 
+		 * // gallaryImg = picturePat; Word.IMG = picturePath; cursor.close();
+		 * addCardimg.setImageBitmap(BitmapFactory.decodeFile(Word.IMG));
+		 * 
+		 * }
+		 */
 
 	}
-	
+
 	/*
-	 *  bitmap을 jpeg 변환하여 갤러리에 저장
+	 * bitmap을 jpeg 변환하여 갤러리에 저장
 	 */
-	
-	public static String saveBitmaptoJpeg(Bitmap bitmap,String folder, String name){
-    	String ex_storage = Environment.getExternalStorageDirectory().getAbsolutePath();
-                                   // Get Absolute Path in External Sdcard 
-    	String foler_name = "/"+folder+"/";
-    	String file_name = name+".jpg";
-    	String string_path = ex_storage+foler_name;
-    	String result_path = string_path+file_name;
-    	
-    	File file_path; 
-    	try{
-    		file_path = new File(string_path);
-    		if(!file_path.isDirectory()){
-    			file_path.mkdirs();
-    		}
-    		FileOutputStream out = new FileOutputStream(string_path+file_name);
-    		
-    		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-    		out.close(); 
-    		
-    		return result_path;
-    
-    	}catch(FileNotFoundException exception){
-    		Log.e("FileNotFoundException", exception.getMessage());
-    	}catch(IOException exception){
-    		Log.e("IOException", exception.getMessage());
-    	}
-    	
-    	return "error";
-    	
-    }
-	
-	
-	private String getDate(long time) {
-	    Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-	    cal.setTimeInMillis(time);
-	    String date = DateFormat.format("ssmmHHddMMyyyy", cal).toString();
-	    Log.i("timeOhdoing",date);
-	    return date;
+
+	public static String saveBitmaptoJpeg(Bitmap bitmap, String folder,
+			String name) {
+		String ex_storage = Environment.getExternalStorageDirectory()
+				.getAbsolutePath();
+		// Get Absolute Path in External Sdcard
+		String foler_name = "/" + folder + "/";
+		String file_name = name + ".jpg";
+		String string_path = ex_storage + foler_name;
+		String result_path = string_path + file_name;
+
+		File file_path;
+		try {
+			file_path = new File(string_path);
+			if (!file_path.isDirectory()) {
+				file_path.mkdirs();
+			}
+			FileOutputStream out = new FileOutputStream(string_path + file_name);
+
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+			out.close();
+
+			return result_path;
+
+		} catch (FileNotFoundException exception) {
+			Log.e("FileNotFoundException", exception.getMessage());
+		} catch (IOException exception) {
+			Log.e("IOException", exception.getMessage());
+		}
+
+		return "error";
+
 	}
-	
-	
+
+	private String getDate(long time) {
+		Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+		cal.setTimeInMillis(time);
+		String date = DateFormat.format("ssmmHHddMMyyyy", cal).toString();
+		Log.i("timeOhdoing", date);
+		return date;
+	}
 
 	/*
 	 * protected void onActivityResult(int requestCode, int resultCode, Intent
@@ -793,7 +757,6 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 		}
 	};
 
-
 	/*
 	 * Base Adapter
 	 */
@@ -829,16 +792,29 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 			// set placeholder as all thumbnail images in the gallery initially
 			for (int i = 0; i < imageBitmaps.length; i++) {
 
-//				placeholder = BitmapFactory.decodeResource(
-//						galleryContext.getResources(), l.get(i).getImg());
-//				placeholder = BitmapFactory.decodeFile(l.get(i).getImg());
-				placeholder = BitmapFactory.decodeResource(
-						galleryContext.getResources(),R.drawable.realcard);
+				// placeholder = BitmapFactory.decodeResource(
+				// galleryContext.getResources(), l.get(i).getImg());
+				// placeholder = BitmapFactory.decodeFile(l.get(i).getImg());
+
+				if (0 == i % 3) {
+
+					placeholder = BitmapFactory.decodeResource(
+							galleryContext.getResources(),
+							R.drawable.realcard_black);
+				} else if (1 == i % 3) {
+
+					placeholder = BitmapFactory.decodeResource(
+							galleryContext.getResources(),
+							R.drawable.realcard_gold);
+				} else if (2 == i % 3) {
+
+					placeholder = BitmapFactory.decodeResource(
+							galleryContext.getResources(),
+							R.drawable.realcard_gray);
+
+				}
+
 				imageBitmaps[i] = placeholder;
-				
-				
-			
-				
 
 			}
 
@@ -872,32 +848,31 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			//이미지 크기 조절 및 위치
+			// 이미지 크기 조절 및 위치
 			// create the view
 			ImageView imageView = new ImageView(galleryContext);
 			// specify the bitmap at this position in the array
 			imageView.setImageBitmap(imageBitmaps[position]);
-			
+
 			Display display = getWindowManager().getDefaultDisplay();
 			Point size = new Point();
 			display.getSize(size);
 			int width = size.x;
 			int height = size.y;
-			
+
+			Log.i("ohdoking", width + " : " + height);
 			// set layout options
-			imageView.setLayoutParams(new Gallery.LayoutParams(width/2, height/4));
+			imageView.setLayoutParams(new Gallery.LayoutParams(width / 2,
+					height / 4));
 			// scale type within view area
 			imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-			
 
-
-			
 			// set default gallery item background
 			// imageView.setBackgroundResource(defaultItemBackground);
 			// return the view
-				
-				currentCardName.setTextColor(Color.WHITE);
-//				currentCardName.setText(getImage(position).getName());
+
+			currentCardName.setTextColor(Color.WHITE);
+			// currentCardName.setText(getImage(position).getName());
 
 			return imageView;
 		}
@@ -920,24 +895,20 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 		}
 
 	}
-	
+
 	/*
-	 *  뒤로가기 (back)
+	 * 뒤로가기 (back)
 	 */
 
-	
-	/*	@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-     // TODO Auto-generated method stub
-
-     	if( keyCode == KeyEvent.KEYCODE_BACK){
-     		
-     		Toast.makeText(this, "Back키를 누르셨군요", Toast.LENGTH_SHORT).show();
-     		return false;
-     	}
-     	return super.onKeyDown(keyCode, event);
-}*/
-	
+	/*
+	 * @Override public boolean onKeyDown(int keyCode, KeyEvent event) { // TODO
+	 * Auto-generated method stub
+	 * 
+	 * if( keyCode == KeyEvent.KEYCODE_BACK){
+	 * 
+	 * Toast.makeText(this, "Back키를 누르셨군요", Toast.LENGTH_SHORT).show(); return
+	 * false; } return super.onKeyDown(keyCode, event); }
+	 */
 
 	/**************************************************************
 	 * getting from com.google.zxing.client.android.encode.QRCodeEncoder
@@ -977,8 +948,15 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 			// Unsupported format
 			return null;
 		}
+
 		int width = result.getWidth();
 		int height = result.getHeight();
+
+		Display display = getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+
+		Log.i("ohdoking_barcode", width + " : " + height);
+
 		int[] pixels = new int[width * height];
 		for (int y = 0; y < height; y++) {
 			int offset = y * width;
@@ -1003,7 +981,6 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 		return null;
 	}
 
-	
 	/*
 	 * ETC
 	 */
@@ -1027,7 +1004,6 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 		return super.onOptionsItemSelected(item);
 	}
 
-	
 	/**
 	 * 
 	 * 
@@ -1036,67 +1012,86 @@ public class ListActivity extends Activity implements AdapterView.OnItemSelected
 	@Override
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int pos,
 			long arg3) {
-		Log.i("test","testIssueclose1");
-		currentCardName.setText( imgAdapt.getImage(pos).getName());
+		currentCardName.setText(imgAdapt.getImage(pos).getName());
+
+		// Integer.MAX_VALUE / 2 ) % mImageIds.length);
+
+//		picGallery.getChildAt(pos+1).setScaleY((float) 1.5);
+//		Log.i("ohdoking",pos - 1+ " : " +pos +" : " + (pos+1));
+//		Log.i("ohdoking","picGallery.getCount" + picGallery.getCount());
+//		Log.i("ohdoking","picGallery.getCount" +picGallery.getFirstVisiblePosition());
+//		Log.i("ohdoking","picGallery.getCount" +picGallery.getLastVisiblePosition());
 		
+		
+		
+		if(pos - 1 < 0)
+		{
+			picGallery.getChildAt((pos - picGallery.getFirstVisiblePosition()+1)).setScaleY((float) 0.5);
+			picGallery.getChildAt((pos - picGallery.getFirstVisiblePosition()+1)).setScaleX((float) 0.5);
+//			picGallery.get
+		}
+//		else if(0 ==  (picGallery.getCount()- 1 -picGallery.getLastVisiblePosition()))
+			else if(picGallery.getChildAt(pos - picGallery.getFirstVisiblePosition()+1) == null)
+		{
+			picGallery.getChildAt((pos - picGallery.getFirstVisiblePosition() - 1)).setScaleY((float) 0.5);
+			picGallery.getChildAt((pos - picGallery.getFirstVisiblePosition() - 1)).setScaleX((float) 0.5);
+		}
+		else
+		{
+			
+			picGallery.getChildAt((pos - picGallery.getFirstVisiblePosition() - 1)).setScaleY((float) 0.5);
+			picGallery.getChildAt((pos - picGallery.getFirstVisiblePosition() - 1)).setScaleX((float) 0.5);
+			
+			picGallery.getChildAt((pos - picGallery.getFirstVisiblePosition() + 1)).setScaleY((float) 0.5);
+			picGallery.getChildAt((pos - picGallery.getFirstVisiblePosition() + 1)).setScaleX((float) 0.5);
+		}
+		
+		picGallery.getChildAt(pos - picGallery.getFirstVisiblePosition()).setScaleX(1);
+		picGallery.getChildAt(pos - picGallery.getFirstVisiblePosition()).setScaleY(1);
+
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
-		currentCardName.setText("test");
-		
 	}
-	
-	
+
 	/**
 	 * 
 	 * button edittext 비었을때 enable / able 처리
+	 * 
 	 * @author ohdoking
 	 *
 	 */
-	
+
 	private class LocalTextWatcher implements TextWatcher {
-	    public void afterTextChanged(Editable s) {
-	        updateButtonState();
-	    }
+		public void afterTextChanged(Editable s) {
+			updateButtonState();
+		}
 
-	    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-	    }
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+		}
 
-	    public void onTextChanged(CharSequence s, int start, int before, int count) {
-	    }
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+		}
 	}
-	
-	
-	
 
 	private boolean checkEditText(EditText edit) {
-	    return edit.getText().length() == 0;
+		return edit.getText().length() == 0;
 	}
+
 	private boolean checkUpdateEditText(EditText edit) {
-	    return edit.getText().length() == 0;
+		return edit.getText().length() == 0;
 	}
-	/*private boolean checkImageView(ImageView edit) {
-		
-		Log.i("ohdoking",edit.getTag() + ": ) : " + getResources().getDrawable(R.drawable.pinkcard));
-	    return edit.getDrawable() == getResources().getDrawable(R.drawable.pinkcard);
-	}
-	
+
 	void updateButtonState() {
-	    if(checkEditText(name) || checkEditText(cardnum) || checkImageView(addCardimg)) buttonAdd.setEnabled(false);
-	    else buttonAdd.setEnabled(true);
-	    
-	    Log.i("ohdoking",String.valueOf(checkImageView(addCardimg)));
-	}*/
-	void updateButtonState() {
-			
-			if(checkEditText(name) || checkEditText(cardnum) ) buttonAdd.setEnabled(false);
-			else buttonAdd.setEnabled(true);
-		
-	    
-	    
+
+		if (checkEditText(name) || checkEditText(cardnum))
+			buttonAdd.setEnabled(false);
+		else
+			buttonAdd.setEnabled(true);
 
 	}
-	
-	
+
 }

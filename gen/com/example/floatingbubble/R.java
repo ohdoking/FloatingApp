@@ -57,13 +57,20 @@ public final class R {
         public static final int greencard=0x7f020006;
         public static final int ic_launcher1=0x7f020007;
         public static final int launcher_icon=0x7f020008;
-        public static final int mintcard=0x7f020009;
-        public static final int pinkcard=0x7f02000a;
-        public static final int realcard=0x7f02000b;
-        public static final int redcard=0x7f02000c;
-        public static final int share_via_barcode=0x7f02000d;
-        public static final int temp_id=0x7f02000e;
-        public static final int yellowcard=0x7f02000f;
+        public static final int metal_cancel_button2_small_o=0x7f020009;
+        public static final int metal_cancle_button_small=0x7f02000a;
+        public static final int metal_plus_button2_small_o=0x7f02000b;
+        public static final int metal_plus_button_small=0x7f02000c;
+        public static final int mintcard=0x7f02000d;
+        public static final int pinkcard=0x7f02000e;
+        public static final int realcard=0x7f02000f;
+        public static final int realcard_black=0x7f020010;
+        public static final int realcard_gold=0x7f020011;
+        public static final int realcard_gray=0x7f020012;
+        public static final int redcard=0x7f020013;
+        public static final int share_via_barcode=0x7f020014;
+        public static final int temp_id=0x7f020015;
+        public static final int yellowcard=0x7f020016;
     }
     public static final class id {
         public static final int action_settings=0x7f09004b;

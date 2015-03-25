@@ -31,7 +31,7 @@ public final class R {
 	}
 	public static final class drawable {
 		public static final int launcher_icon = 0x7f020008;
-		public static final int share_via_barcode = 0x7f02000d;
+		public static final int share_via_barcode = 0x7f020014;
 	}
 	public static final class id {
 		public static final int app_picker_list_item_icon = 0x7f090017;

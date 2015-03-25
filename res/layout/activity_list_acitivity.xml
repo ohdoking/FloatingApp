@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:orientation="vertical" >
@@ -11,7 +11,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="100dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/addbtn1"
+        android:background="@drawable/metal_plus_button_small"
         android:gravity="center"
         android:padding="5dp" />
 
@@ -36,7 +36,6 @@
             android:layout_alignTop="@+id/gallery"
             android:layout_margin="1dp"
             android:gravity="center"
-            android:text="Hello"
             android:textColor="#000000" />
     </RelativeLayout>
 
@@ -47,12 +46,12 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="100dp"
-        android:background="@drawable/cancelbtn"
+        android:background="@drawable/metal_cancle_button_small"
         android:padding="5dp" />
 
     <ImageView
         android:id="@+id/picture"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:contentDescription="@string/picture" />
     <!--
