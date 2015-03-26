@@ -1,10 +1,13 @@
 package com.example.floatingbubble;
 
+import android.app.PendingIntent;
+import android.app.PendingIntent.CanceledException;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
@@ -107,8 +110,25 @@ public class FloatingFaceBubbleService extends Service {
 			public boolean onLongClick(View v) {
 				Log.i("die","죽음!!");
 //				Toast.makeText(FloatingFaceBubbleService.this, "어플종료", Toast.LENGTH_SHORT).show();
-				stopSelf();
-				android.os.Process.killProcess(android.os.Process.myPid()); //강제종료
+				
+				Bundle bun = new Bundle();
+				bun.putString("notiMessage", "");
+
+				Intent popupIntent = new Intent(getApplicationContext(), AlertDialogActivity.class);
+
+				popupIntent.putExtras(bun);
+				PendingIntent pie= PendingIntent.getActivity(getApplicationContext(), 0, popupIntent, PendingIntent.FLAG_ONE_SHOT);
+				 try {
+					pie.send();
+				} catch (CanceledException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+				
+//				stopSelf();
+//				android.os.Process.killProcess(android.os.Process.myPid()); //강제종료
 				return true;
 			}
 		});

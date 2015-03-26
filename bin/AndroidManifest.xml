@@ -46,6 +46,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".AlertDialogActivity"
+            android:theme="@android:style/Theme.Light.WallpaperSettings" >
+        </activity>
 
         <receiver android:name="BrReceiver1" >
         </receiver>

@@ -1014,6 +1014,11 @@ public class ListActivity extends Activity implements
 			long arg3) {
 		currentCardName.setText(imgAdapt.getImage(pos).getName());
 
+		try {
+			changeImageSize(pos);
+		} catch (Exception e) {
+			
+		}
 		// Integer.MAX_VALUE / 2 ) % mImageIds.length);
 
 //		picGallery.getChildAt(pos+1).setScaleY((float) 1.5);
@@ -1024,7 +1029,12 @@ public class ListActivity extends Activity implements
 		
 		
 		
-		if(pos - 1 < 0)
+		
+
+	}
+	
+    public void changeImageSize(int pos) throws Exception{
+    	if(pos - 1 < 0)
 		{
 			picGallery.getChildAt((pos - picGallery.getFirstVisiblePosition()+1)).setScaleY((float) 0.5);
 			picGallery.getChildAt((pos - picGallery.getFirstVisiblePosition()+1)).setScaleX((float) 0.5);
@@ -1048,8 +1058,7 @@ public class ListActivity extends Activity implements
 		
 		picGallery.getChildAt(pos - picGallery.getFirstVisiblePosition()).setScaleX(1);
 		picGallery.getChildAt(pos - picGallery.getFirstVisiblePosition()).setScaleY(1);
-
-	}
+    }
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
