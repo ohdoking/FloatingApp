@@ -1,8 +1,12 @@
 package com.example.floatingbubble;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -12,6 +16,7 @@ import android.widget.TextView;
 public class AlertDialogActivity extends Activity {
 
 	private String notiMessage;
+	private BroadcastReceiver   locationChangereceiver;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -41,9 +46,15 @@ public class AlertDialogActivity extends Activity {
 	private class SubmitOnClickListener implements OnClickListener {
 
 		public void onClick(View v) {
-
-			stopService(new Intent(
-					"com.example.floatingbubble.FloatingFaceBubbleService"));
+			Log.i("die","rrrrrrr죽음!!");
+			
+			Intent intent  = new Intent(getApplicationContext(), ListActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.putExtra("EXIT", true);
+			startActivity(intent);
+			
+			finish();
+	        stopService(new Intent(getApplicationContext(), FloatingFaceBubbleService.class));
 			android.os.Process.killProcess(android.os.Process.myPid()); // 강제종료
 		}
 	}

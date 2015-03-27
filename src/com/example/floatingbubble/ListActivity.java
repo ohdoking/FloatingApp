@@ -133,7 +133,13 @@ public class ListActivity extends Activity implements
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.activity_list_acitivity);
-
+		
+		
+		if (getIntent().getBooleanExtra("EXIT", false)) {
+		    finish();
+		}
+		
+		
 		Display display = getWindowManager().getDefaultDisplay();
 		Point point = new Point();
 		display.getSize(point);
@@ -208,6 +214,8 @@ public class ListActivity extends Activity implements
 			// currentCardName.setText(selectImg.getName());
 			imgAdapt.notifyDataSetChanged();
 
+			
+			
 			tempImg.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
 			tempText.setText(String.valueOf(selectImg.getCardNum()));
 			/*
@@ -1015,9 +1023,13 @@ public class ListActivity extends Activity implements
 		currentCardName.setText(imgAdapt.getImage(pos).getName());
 
 		try {
+			
 			changeImageSize(pos);
 		} catch (Exception e) {
 			
+			Toast.makeText(ListActivity.this,
+					e.getStackTrace().toString(), Toast.LENGTH_SHORT)
+					.show();
 		}
 		// Integer.MAX_VALUE / 2 ) % mImageIds.length);
 
@@ -1033,7 +1045,7 @@ public class ListActivity extends Activity implements
 
 	}
 	
-    public void changeImageSize(int pos) throws Exception{
+    public void changeImageSize(int pos) throws RuntimeException{
     	if(pos - 1 < 0)
 		{
 			picGallery.getChildAt((pos - picGallery.getFirstVisiblePosition()+1)).setScaleY((float) 0.5);

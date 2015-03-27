@@ -59,12 +59,12 @@ public class FloatingFaceBubbleService extends Service {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     //remove face bubble on long press
-                	if(System.currentTimeMillis()-touchStartTime>ViewConfiguration.getLongPressTimeout() && initialTouchX== event.getX()){
-                		windowManager.removeView(floatingFaceBubble);
-                		stopSelf();
-                		return false;
-                		
-                	}
+//                	if(System.currentTimeMillis()-touchStartTime>ViewConfiguration.getLongPressTimeout() && initialTouchX== event.getX()){
+//                		windowManager.removeView(floatingFaceBubble);
+//                		stopSelf();
+//                		return false;
+//                		
+//                	}
                 	switch(event.getAction()){
                     
                     
@@ -108,11 +108,10 @@ public class FloatingFaceBubbleService extends Service {
         floatingFaceBubble.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
-				Log.i("die","죽음!!");
+			
 //				Toast.makeText(FloatingFaceBubbleService.this, "어플종료", Toast.LENGTH_SHORT).show();
 				
 				Bundle bun = new Bundle();
-				bun.putString("notiMessage", "");
 
 				Intent popupIntent = new Intent(getApplicationContext(), AlertDialogActivity.class);
 
