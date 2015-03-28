@@ -26,7 +26,10 @@ package com.yapp.mycard;
 import com.example.floatingbubble.R;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -53,6 +56,8 @@ public class TutorialActivity extends Activity {
     Intent intent;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        closeBroadcast();
         
         intent = getIntent(); // 값을 받아온다.
         
@@ -227,4 +232,14 @@ public class TutorialActivity extends Activity {
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         return pref.getString("checkTutorial", "");
     }
+    
+    public void closeBroadcast() {
+		final BroadcastReceiver br = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				finish();
+			}
+		};
+		registerReceiver(br, new IntentFilter("listview"));
+	}
 }
