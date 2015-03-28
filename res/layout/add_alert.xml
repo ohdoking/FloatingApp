@@ -4,6 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+<!--     <ImageView
+        android:src="@drawable/metal_cancel_button2_small_o"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:scaleType="center"
+        android:background="#FFFFBB33"
+        android:contentDescription="@string/app_name" /> -->
+    
     <ImageView
         android:id="@+id/addCardimg"
         android:layout_gravity="center"
@@ -11,23 +19,20 @@
         android:layout_marginTop="20px"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50px"
-        android:src="@drawable/pinkcard" />
+        android:src="@drawable/add_a_barcode" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <TextView
-            android:gravity="left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="• 이름" />
+
 
         <EditText
             android:id="@+id/addtextCardName"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="이름"
             android:layout_weight="3"
             android:inputType="textPersonName" >
 
@@ -40,17 +45,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <TextView
+       <!--  <TextView
             android:layout_width="wrap_content"
             android:gravity="left"
             android:layout_height="wrap_content"
-            android:text="• 카드번호" />
+            android:text="• 카드번호" /> -->
 
         <EditText
             android:id="@+id/addtextCardNum"
 			android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:enabled="false"
+            android:hint="카드 번호"
+           
             android:gravity="center"
             android:layout_weight="1"
             android:ems="10"

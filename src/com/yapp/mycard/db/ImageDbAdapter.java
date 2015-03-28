@@ -54,7 +54,7 @@ public class ImageDbAdapter {
 
 	// update
 
-	public void update(Image img, Long cardNum) {
+	public void update(Image img, String cardNum) {
 
 		db = helper.getWritableDatabase(); // db ��ü�� ���´�. ���Ⱑ��
 
@@ -82,37 +82,43 @@ public class ImageDbAdapter {
 
 	// select
 
-	public Image select(int select_id) {
-		Image img = new Image();
+	public ArrayList<Image> select(String name) {
+		ArrayList<Image> imgList = new ArrayList<Image>();
+		int i = 0;
+		db = helper.getReadableDatabase(); 
 
-		// 1) db�� �����͸� �о�ͼ�, 2) ��� ����, 3)�ش� �����͸� ���� ���
-		db = helper.getReadableDatabase(); // db��ü�� ���´�. �б� ���
-		// Cursor c = db.query("image", null, null, null, null, null, null);
+//		String sql = "SELECT * FROM image WHERE name =" + name +"";
+		
+		if (name.length() != 0) {
 
-		String sql = "SELECT * FROM image WHERE _id =" + select_id;
-		Cursor result = db.rawQuery(sql, null);
+	        name = "%"+ name + "%";
+	    }
+		
+		String[] columns={"name", "card_name","img"};
+		String[] parms={name};
+		Cursor result=db.query("image", columns, "name LIKE ?", parms, null, null, null);
+		
 
-		// result(Cursor ��ü)�� ��� ������ false ����
-		if (result.moveToFirst()) {
+		
+		
+		if (result != null && result.moveToFirst()) {
+			while (result.isAfterLast() == false) {
 
-			int id = result.getInt(0);
-			String name = result.getString(1);
-			Long cardName = Long.parseLong(result.getString(2));
-			String img2 = result.getString(3);
-			// String img2 = result.getString(3);
-			boolean secure = Boolean.parseBoolean(result.getString(4));
-			String etc = result.getString(5);
-
-			img.setId(id);
-			img.setName(name);
-			img.setCardNum(cardName);
-			img.setSecure(secure);
-			img.setEtc(etc);
+			String cardName = result.getString(0);
+			String cardNum = result.getString(1);
+			String img2 = result.getString(2);
+			Image img = new Image();
+			img.setName(cardName);
+			img.setCardNum(cardNum);
 			img.setImg(img2);
+			
+			imgList.add(img);
+			result.moveToNext();
+			}
 		}
 		result.close();
 
-		return img;
+		return imgList;
 
 	}
 
@@ -127,7 +133,7 @@ public class ImageDbAdapter {
 				Image img = new Image();
 				img.setId(result.getInt(0));
 				img.setName(result.getString(1));
-				img.setCardNum(Long.parseLong(result.getString(2)));
+				img.setCardNum(result.getString(2));
 				img.setImg(result.getString(3));
 				img.setSecure(Boolean.parseBoolean(result.getString(4)));
 				img.setEtc(result.getString(5));
