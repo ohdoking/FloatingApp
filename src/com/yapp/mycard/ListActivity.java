@@ -10,6 +10,8 @@ import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -38,6 +40,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
@@ -135,12 +138,20 @@ public class ListActivity extends Activity implements
 	EditText etSearch;
 	Button btnSearch;
 
+	LinearLayout totalView;
+	LinearLayout searchView;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.activity_list_acitivity);
+
+		totalView = (LinearLayout) findViewById(R.id.listviewPage);
+		searchView = (LinearLayout) findViewById(R.id.searchView);
+		
+		searchingShow();
 
 		closeBroadcast();
 
@@ -185,9 +196,8 @@ public class ListActivity extends Activity implements
 				Log.i("ohdokingDB", String.valueOf(imgList.size()));
 
 				if (imgList.size() == 0) {
-					Toast.makeText(ListActivity.this,
-							"검색 결과가 없습니다.", Toast.LENGTH_SHORT)
-							.show();
+					Toast.makeText(ListActivity.this, "검색 결과가 없습니다.",
+							Toast.LENGTH_SHORT).show();
 				} else {
 					AlertDialog.Builder builderSingle = new AlertDialog.Builder(
 							ListActivity.this);
@@ -304,7 +314,7 @@ public class ListActivity extends Activity implements
 			final Image selectImg = imgAdapt.getImage(position);
 
 			// currentCardName.setText(selectImg.getName());
-//			imgAdapt.notifyDataSetChanged();
+			// imgAdapt.notifyDataSetChanged();
 			tempName.setText(selectImg.getName());
 			tempImg.setImageBitmap(BitmapFactory.decodeFile(selectImg.getImg()));
 			tempText.setText(String.valueOf(selectImg.getCardNum()));
@@ -1242,6 +1252,67 @@ public class ListActivity extends Activity implements
 			}
 		};
 		registerReceiver(br, new IntentFilter("listview"));
+	}
+	
+	/*
+	 * touch down,up searching bar
+	 */
+	
+	public void searchingShow(){
+		// Prepare the View for the animation
+				searchView.setAlpha(0.0f);
+
+				
+//				Animation anim = AnimationUtils
+//						.loadAnimation(this, R.anim.slide_in_top);
+				
+				totalView
+						.setOnTouchListener(new OnSwipeTouchListener(ListActivity.this) {
+							public void onSwipeTop() {
+								Toast.makeText(ListActivity.this, "top",
+										Toast.LENGTH_SHORT).show();
+								searchView.animate()
+							    .translationY(0)
+							    .alpha(0.0f)
+							    .setListener(new AnimatorListenerAdapter() {
+							        @Override
+							        public void onAnimationEnd(Animator animation) {
+							            super.onAnimationEnd(animation);
+							            searchView.setVisibility(View.INVISIBLE);
+							        }
+							    });
+							}
+
+							public void onSwipeRight() {
+								Toast.makeText(ListActivity.this, "right",
+										Toast.LENGTH_SHORT).show();
+							}
+
+							public void onSwipeLeft() {
+								Toast.makeText(ListActivity.this, "left",
+										Toast.LENGTH_SHORT).show();
+							}
+
+							public void onSwipeBottom() {
+								Toast.makeText(ListActivity.this, "bottom",
+										Toast.LENGTH_SHORT).show();
+								
+								searchView.animate()
+							    .translationY(0)
+							    .alpha(1.0f)
+							    .setListener(new AnimatorListenerAdapter() {
+							        @Override
+							        public void onAnimationEnd(Animator animation) {
+							            super.onAnimationEnd(animation);
+							            searchView.setVisibility(View.VISIBLE);
+							        }
+							    });
+							}
+
+							public boolean onTouch(View v, MotionEvent event) {
+								return gestureDetector.onTouchEvent(event);
+							}
+						});
 	}
 
 }
