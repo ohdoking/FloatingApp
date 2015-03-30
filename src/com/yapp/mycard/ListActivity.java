@@ -185,88 +185,7 @@ public class ListActivity extends Activity implements
 
 		closeWindows.setOnClickListener(historyBack);
 
-		btnSearch.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				String tempSearch = etSearch.getText().toString();
-				final ArrayList<Image> imgList = imageDb.select(tempSearch);
-
-				Log.i("ohdokingDB", String.valueOf(imgList.size()));
-
-				if (imgList.size() == 0) {
-					Toast.makeText(ListActivity.this, "검색 결과가 없습니다.",
-							Toast.LENGTH_SHORT).show();
-				} else {
-					AlertDialog.Builder builderSingle = new AlertDialog.Builder(
-							ListActivity.this);
-					builderSingle.setTitle("검색 결과");
-					final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-							ListActivity.this,
-							android.R.layout.simple_list_item_activated_1);
-
-					for (Image img : imgList) {
-						arrayAdapter.add(img.getName());
-					}
-					builderSingle.setNegativeButton("cancel",
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									dialog.dismiss();
-								}
-							});
-
-					builderSingle.setAdapter(arrayAdapter,
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									String strName = arrayAdapter
-											.getItem(which);
-									final LinearLayout linear2 = (LinearLayout) View
-											.inflate(ListActivity.this,
-													R.layout.pop_up, null);
-									final TextView tempName = (TextView) linear2
-											.findViewById(R.id.imgName);
-									final ImageView tempImg = (ImageView) linear2
-											.findViewById(R.id.imgTest);
-									final TextView tempText = (TextView) linear2
-											.findViewById(R.id.imgText);
-									// set the larger image view to display the
-									// chosen bitmap calling
-									// picView.setImageBitmap(imgAdapt.getPic(position));
-									// result.setText(
-									// imgAdapt.getImage(position).getName());
-									alAddDialog = new AlertDialog.Builder(
-											ListActivity.this).setView(linear2)
-											.setCancelable(true).show();
-
-									Image imgTemp = null;
-
-									for (Image curVal : imgList) {
-										if (curVal.getName().equals(strName)) {
-											imgTemp = curVal;
-										}
-									}
-
-									// currentCardName.setText(selectImg.getName());
-									imgAdapt.notifyDataSetChanged();
-									tempName.setText(imgTemp.getName());
-									tempImg.setImageBitmap(BitmapFactory
-											.decodeFile(imgTemp.getImg()));
-									tempText.setText(String.valueOf(imgTemp
-											.getCardNum()));
-								}
-							});
-					builderSingle.show();
-				}
-
-			}
-		});
+		btnSearch.setOnClickListener(searchCard);
 
 	}
 
@@ -287,6 +206,92 @@ public class ListActivity extends Activity implements
 	 * Click
 	 */
 
+	
+	//카드 검색
+	
+	public OnClickListener searchCard = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			String tempSearch = etSearch.getText().toString();
+			final ArrayList<Image> imgList = imageDb.select(tempSearch);
+
+			Log.i("ohdokingDB", String.valueOf(imgList.size()));
+
+			if (imgList.size() == 0) {
+				Toast.makeText(ListActivity.this, "검색 결과가 없습니다.",
+						Toast.LENGTH_SHORT).show();
+			} else {
+				AlertDialog.Builder builderSingle = new AlertDialog.Builder(
+						ListActivity.this);
+				builderSingle.setTitle("검색 결과");
+				final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+						ListActivity.this,
+						android.R.layout.simple_selectable_list_item);
+
+				for (Image img : imgList) {
+					arrayAdapter.add(img.getName());
+				}
+				builderSingle.setNegativeButton("cancel",
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.dismiss();
+							}
+						});
+
+				builderSingle.setAdapter(arrayAdapter,
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								String strName = arrayAdapter
+										.getItem(which);
+								final LinearLayout linear2 = (LinearLayout) View
+										.inflate(ListActivity.this,
+												R.layout.pop_up, null);
+								final TextView tempName = (TextView) linear2
+										.findViewById(R.id.imgName);
+								final ImageView tempImg = (ImageView) linear2
+										.findViewById(R.id.imgTest);
+								final TextView tempText = (TextView) linear2
+										.findViewById(R.id.imgText);
+								// set the larger image view to display the
+								// chosen bitmap calling
+								// picView.setImageBitmap(imgAdapt.getPic(position));
+								// result.setText(
+								// imgAdapt.getImage(position).getName());
+								alAddDialog = new AlertDialog.Builder(
+										ListActivity.this).setView(linear2)
+										.setCancelable(true).show();
+
+								Image imgTemp = null;
+
+								for (Image curVal : imgList) {
+									if (curVal.getName().equals(strName)) {
+										imgTemp = curVal;
+									}
+								}
+
+								// currentCardName.setText(selectImg.getName());
+								imgAdapt.notifyDataSetChanged();
+								tempName.setText(imgTemp.getName());
+								tempImg.setImageBitmap(BitmapFactory
+										.decodeFile(imgTemp.getImg()));
+								tempText.setText(String.valueOf(imgTemp
+										.getCardNum()));
+							}
+						}).show();
+			}
+
+		}
+	};
+	
+	
 	// 카드보기
 	public OnItemClickListener showCard = new OnItemClickListener() {
 		// handle clicks

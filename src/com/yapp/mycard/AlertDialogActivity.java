@@ -2,7 +2,9 @@ package com.yapp.mycard;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
@@ -31,7 +33,7 @@ public class AlertDialogActivity extends Activity {
 		notiMessage = bun.getString("notiMessage");
 
 		setContentView(R.layout.alertdialog);
-
+		closeBroadcast();
 		TextView tvMaker = (TextView) findViewById(R.id.maker);
 		TextView tvMaker2 = (TextView) findViewById(R.id.maker2);
 		
@@ -122,5 +124,15 @@ public class AlertDialogActivity extends Activity {
 					FloatingFaceBubbleService.class));
 			android.os.Process.killProcess(android.os.Process.myPid()); // 강제종료
 		}
+	}
+	
+	public void closeBroadcast() {
+		final BroadcastReceiver br = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				finish();
+			}
+		};
+		registerReceiver(br, new IntentFilter("listview"));
 	}
 }
