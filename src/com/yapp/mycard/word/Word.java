@@ -10,4 +10,6 @@ public class Word {
 	
 	public static String IMG;
 	
+	public static String arrange = "asc"; 
+	
 }

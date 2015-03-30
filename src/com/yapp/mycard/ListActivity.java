@@ -170,7 +170,14 @@ public class ListActivity extends Activity implements
 		l = new ArrayList<Image>();
 
 		ids();
-		listUpdate("selectAll");
+		if(Word.arrange.equals("asc"))
+		{
+			listUpdate("asc");
+		}
+		else
+		{
+			listUpdate("desc");
+		}
 
 		// Add Card
 		addCard.setOnClickListener(addImageClicked);
@@ -468,7 +475,7 @@ public class ListActivity extends Activity implements
 																DialogInterface dialog,
 																int which) {
 															imageDb.delete(selectImg);
-															listUpdate("selectAll");
+															listUpdate("asc");
 															refresh();
 															al.dismiss();
 															// 위 네줄이 원래 있던 줄..
@@ -586,8 +593,7 @@ public class ListActivity extends Activity implements
 
 	public void listUpdate(String name) {
 
-		if (name.equals("selectAll")) {
-			l = imageDb.selectAll();
+			l = imageDb.selectAll(name);
 			// create a new adapter
 
 			if (!imageDb.isEmpty()) {
@@ -598,9 +604,7 @@ public class ListActivity extends Activity implements
 				picGallery.setScaleY(1);
 
 			}
-		} else if (name.equals("delete")) {
-
-		}
+		
 
 	}
 
@@ -1290,11 +1294,15 @@ public class ListActivity extends Activity implements
 					public void onSwipeRight() {
 						Toast.makeText(ListActivity.this, "right",
 								Toast.LENGTH_SHORT).show();
+						Word.arrange = "desc";
+						refresh();
 					}
 
 					public void onSwipeLeft() {
 						Toast.makeText(ListActivity.this, "left",
 								Toast.LENGTH_SHORT).show();
+						Word.arrange = "asc";
+						refresh();
 					}
 
 					public void onSwipeBottom() {

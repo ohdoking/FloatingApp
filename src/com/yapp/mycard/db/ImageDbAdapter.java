@@ -122,9 +122,20 @@ public class ImageDbAdapter {
 
 	}
 
-	public ArrayList<Image> selectAll() {
+	public ArrayList<Image> selectAll(String arrange) {
 
-		String sql = "SELECT * FROM image";
+		String sql = null ;
+		if(arrange.equals("asc"))
+		{
+		
+			sql = "SELECT * FROM image order by name asc";
+		}
+		else if(arrange.equals("desc"))
+		{
+			
+			sql = "SELECT * FROM image order by name desc";
+			
+		}
 		Cursor result = db.rawQuery(sql, null);
 
 		if (result != null && result.moveToFirst()) {
