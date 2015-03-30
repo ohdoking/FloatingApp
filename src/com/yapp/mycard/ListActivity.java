@@ -248,7 +248,7 @@ public class ListActivity extends Activity implements
 									Image imgTemp = null;
 
 									for (Image curVal : imgList) {
-										if (curVal.getName().contains(strName)) {
+										if (curVal.getName().equals(strName)) {
 											imgTemp = curVal;
 										}
 									}
