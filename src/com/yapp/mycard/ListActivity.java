@@ -150,7 +150,7 @@ public class ListActivity extends Activity implements
 
 		totalView = (LinearLayout) findViewById(R.id.listviewPage);
 		searchView = (LinearLayout) findViewById(R.id.searchView);
-		
+
 		searchingShow();
 
 		closeBroadcast();
@@ -503,8 +503,8 @@ public class ListActivity extends Activity implements
 												.equals(String
 														.valueOf(selectImg
 																.getCardNum()))) {
-
-											imageDb.update(tempImg, beforeValue);
+											tempImg.setImg(selectImg
+													.getImg());
 										}
 
 										imageDb.update(tempImg, beforeValue);
@@ -1253,66 +1253,64 @@ public class ListActivity extends Activity implements
 		};
 		registerReceiver(br, new IntentFilter("listview"));
 	}
-	
+
 	/*
 	 * touch down,up searching bar
 	 */
-	
-	public void searchingShow(){
+
+	public void searchingShow() {
 		// Prepare the View for the animation
-				searchView.setAlpha(0.0f);
+		searchView.setAlpha(0.0f);
 
-				
-//				Animation anim = AnimationUtils
-//						.loadAnimation(this, R.anim.slide_in_top);
-				
-				totalView
-						.setOnTouchListener(new OnSwipeTouchListener(ListActivity.this) {
-							public void onSwipeTop() {
-								Toast.makeText(ListActivity.this, "top",
-										Toast.LENGTH_SHORT).show();
-								searchView.animate()
-							    .translationY(0)
-							    .alpha(0.0f)
-							    .setListener(new AnimatorListenerAdapter() {
-							        @Override
-							        public void onAnimationEnd(Animator animation) {
-							            super.onAnimationEnd(animation);
-							            searchView.setVisibility(View.INVISIBLE);
-							        }
-							    });
-							}
+		// Animation anim = AnimationUtils
+		// .loadAnimation(this, R.anim.slide_in_top);
 
-							public void onSwipeRight() {
-								Toast.makeText(ListActivity.this, "right",
-										Toast.LENGTH_SHORT).show();
-							}
+		totalView
+				.setOnTouchListener(new OnSwipeTouchListener(ListActivity.this) {
+					public void onSwipeTop() {
+						Toast.makeText(ListActivity.this, "top",
+								Toast.LENGTH_SHORT).show();
+						searchView.animate().translationY(0).alpha(0.0f)
+								.setListener(new AnimatorListenerAdapter() {
+									@Override
+									public void onAnimationEnd(
+											Animator animation) {
+										super.onAnimationEnd(animation);
+										searchView
+												.setVisibility(View.INVISIBLE);
+									}
+								});
+					}
 
-							public void onSwipeLeft() {
-								Toast.makeText(ListActivity.this, "left",
-										Toast.LENGTH_SHORT).show();
-							}
+					public void onSwipeRight() {
+						Toast.makeText(ListActivity.this, "right",
+								Toast.LENGTH_SHORT).show();
+					}
 
-							public void onSwipeBottom() {
-								Toast.makeText(ListActivity.this, "bottom",
-										Toast.LENGTH_SHORT).show();
-								
-								searchView.animate()
-							    .translationY(0)
-							    .alpha(1.0f)
-							    .setListener(new AnimatorListenerAdapter() {
-							        @Override
-							        public void onAnimationEnd(Animator animation) {
-							            super.onAnimationEnd(animation);
-							            searchView.setVisibility(View.VISIBLE);
-							        }
-							    });
-							}
+					public void onSwipeLeft() {
+						Toast.makeText(ListActivity.this, "left",
+								Toast.LENGTH_SHORT).show();
+					}
 
-							public boolean onTouch(View v, MotionEvent event) {
-								return gestureDetector.onTouchEvent(event);
-							}
-						});
+					public void onSwipeBottom() {
+						Toast.makeText(ListActivity.this, "bottom",
+								Toast.LENGTH_SHORT).show();
+
+						searchView.animate().translationY(0).alpha(1.0f)
+								.setListener(new AnimatorListenerAdapter() {
+									@Override
+									public void onAnimationEnd(
+											Animator animation) {
+										super.onAnimationEnd(animation);
+										searchView.setVisibility(View.VISIBLE);
+									}
+								});
+					}
+
+					public boolean onTouch(View v, MotionEvent event) {
+						return gestureDetector.onTouchEvent(event);
+					}
+				});
 	}
 
 }
