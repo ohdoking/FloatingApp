@@ -23,7 +23,7 @@ package com.yapp.mycard;
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
  
-import com.example.floatingbubble.R;
+import com.yapp.mycard.R;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;

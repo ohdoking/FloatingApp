@@ -10,21 +10,23 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:visibility="invisible"
-        android:background="#EED7D7"
         android:orientation="horizontal" >
 
         <EditText
             android:id="@+id/etSearch"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:textColor="#FFFFFF"
+            android:layout_weight="1" >
+        </EditText>
 
         <Button
             android:id="@+id/btnSearch"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:text="검색"
             android:layout_weight="3"
-            android:text="검색" />
+             />
     </LinearLayout>
     
     <Button

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -17,8 +16,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
-
-import com.example.floatingbubble.R;
 
 public class AlertDialogActivity extends Activity {
 
@@ -130,9 +127,11 @@ public class AlertDialogActivity extends Activity {
 		final BroadcastReceiver br = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
+				unregisterReceiver(this);
 				finish();
 			}
 		};
 		registerReceiver(br, new IntentFilter("listview"));
 	}
+	
 }

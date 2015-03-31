@@ -14,6 +14,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,39 +25,28 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
-import android.hardware.Camera.Parameters;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.ContactsContract.CommonDataKinds.Im;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -69,14 +59,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.floatingbubble.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.yapp.mycard.db.ImageDbAdapter;
-import com.yapp.mycard.db.SecurityDbAdapter;
 import com.yapp.mycard.dto.Image;
 import com.yapp.mycard.dto.Security;
 import com.yapp.mycard.word.Word;
@@ -140,7 +128,9 @@ public class ListActivity extends Activity implements
 
 	LinearLayout totalView;
 	LinearLayout searchView;
-
+	
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -224,13 +214,15 @@ public class ListActivity extends Activity implements
 			String tempSearch = etSearch.getText().toString();
 			final ArrayList<Image> imgList = imageDb.select(tempSearch);
 
-			Log.i("ohdokingDB", String.valueOf(imgList.size()));
+		
+	        
+	        Log.i("ohdokingDB", String.valueOf(imgList.size()));
 
 			if (imgList.size() == 0) {
 				Toast.makeText(ListActivity.this, "검색 결과가 없습니다.",
 						Toast.LENGTH_SHORT).show();
 			} else {
-				AlertDialog.Builder builderSingle = new AlertDialog.Builder(
+				Builder builderSingle = new AlertDialog.Builder(
 						ListActivity.this);
 				builderSingle.setTitle("검색 결과");
 				final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
@@ -249,7 +241,7 @@ public class ListActivity extends Activity implements
 								dialog.dismiss();
 							}
 						});
-
+				
 				builderSingle.setAdapter(arrayAdapter,
 						new DialogInterface.OnClickListener() {
 
@@ -272,10 +264,15 @@ public class ListActivity extends Activity implements
 								// picView.setImageBitmap(imgAdapt.getPic(position));
 								// result.setText(
 								// imgAdapt.getImage(position).getName());
-								alAddDialog = new AlertDialog.Builder(
+								
+								Builder b = new AlertDialog.Builder(
 										ListActivity.this).setView(linear2)
-										.setCancelable(true).show();
-
+										.setCancelable(true);
+								
+								alAddDialog = b.create();
+								alAddDialog.setCanceledOnTouchOutside(true);
+								alAddDialog.show();
+								
 								Image imgTemp = null;
 
 								for (Image curVal : imgList) {
@@ -317,9 +314,14 @@ public class ListActivity extends Activity implements
 			// set the larger image view to display the chosen bitmap calling
 			// picView.setImageBitmap(imgAdapt.getPic(position));
 			// result.setText( imgAdapt.getImage(position).getName());
-			alAddDialog = new AlertDialog.Builder(ListActivity.this)
-					.setView(linear2).setCancelable(true).show();
-
+			
+			Builder b = new AlertDialog.Builder(ListActivity.this)
+					.setView(linear2).setCancelable(true);
+			
+			alAddDialog = b.create();
+			alAddDialog.setCanceledOnTouchOutside(true);
+			alAddDialog.show();
+			
 			final int pos = position;
 			final Image imgTemp = null;
 
@@ -391,7 +393,10 @@ public class ListActivity extends Activity implements
 
 			addCardimg.setOnClickListener(addImage);
 			// 키 얼럴트 창이 떠오른다!!!!
-			alAddDialog = new AlertDialog.Builder(ListActivity.this)
+			
+			
+			
+			Builder b= new AlertDialog.Builder(ListActivity.this)
 					// .setTitle("추가 페이지")
 					// .setIcon(R.drawable.floating_img3)
 					// .setMessage("hi")
@@ -422,7 +427,11 @@ public class ListActivity extends Activity implements
 									alAddDialog.dismiss();
 
 								}
-							}).show();
+							});
+							
+							alAddDialog = b.create();
+							alAddDialog.setCanceledOnTouchOutside(true);
+							alAddDialog.show();
 
 			buttonAdd = alAddDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
 			updateButtonState();
@@ -452,7 +461,9 @@ public class ListActivity extends Activity implements
 			editCarding.setOnClickListener(editImage);
 			final String beforeValue = selectImg.getCardNum();
 
-			al = new AlertDialog.Builder(ListActivity.this)
+			
+			
+			Builder b = new AlertDialog.Builder(ListActivity.this)
 					.setView(editLayer)
 					.setCancelable(true)
 					.setPositiveButton("삭제",
@@ -533,9 +544,10 @@ public class ListActivity extends Activity implements
 
 									al.dismiss();
 								}
-							})
-
-					.show();
+							});
+					al = b.create();
+					al.setCanceledOnTouchOutside(true);
+					al.show();
 
 			al.setOnKeyListener(new Dialog.OnKeyListener() {
 				@Override
@@ -926,22 +938,38 @@ public class ListActivity extends Activity implements
 				// galleryContext.getResources(), l.get(i).getImg());
 				// placeholder = BitmapFactory.decodeFile(l.get(i).getImg());
 
-				if (0 == i % 3) {
+				if (0 == i % 6) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
 							R.drawable.realcard_black);
-				} else if (1 == i % 3) {
+				} else if (1 == i % 6) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
 							R.drawable.realcard_gold);
-				} else if (2 == i % 3) {
+				} else if (2 == i % 6) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
 							R.drawable.realcard_gray);
 
+				}else if (3 == i % 6) {
+
+					placeholder = BitmapFactory.decodeResource(
+							galleryContext.getResources(),
+							R.drawable.yapp_card_pink);
+				} else if (4 == i % 6) {
+
+					placeholder = BitmapFactory.decodeResource(
+							galleryContext.getResources(),
+							R.drawable.yapp_card_purple);
+
+				}else if (5 == i % 6) {
+
+					placeholder = BitmapFactory.decodeResource(
+							galleryContext.getResources(),
+							R.drawable.yapp_card_sky);
 				}
 
 				imageBitmaps[i] = placeholder;
@@ -1115,24 +1143,6 @@ public class ListActivity extends Activity implements
 	 * ETC
 	 */
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 
 	/**
 	 * 
@@ -1257,6 +1267,7 @@ public class ListActivity extends Activity implements
 		final BroadcastReceiver br = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
+				unregisterReceiver(this);
 				finish();
 			}
 		};
@@ -1292,22 +1303,45 @@ public class ListActivity extends Activity implements
 					}
 
 					public void onSwipeRight() {
-						Toast.makeText(ListActivity.this, "right",
-								Toast.LENGTH_SHORT).show();
-						Word.arrange = "desc";
-						refresh();
+						
+						if(!Word.arrange.equals("asc")){
+							Toast.makeText(ListActivity.this, "right/오름차순",
+									Toast.LENGTH_SHORT).show();
+							
+							Word.arrange = "asc";
+							refresh();
+						}
 					}
 
 					public void onSwipeLeft() {
-						Toast.makeText(ListActivity.this, "left",
+						
+						Toast.makeText(ListActivity.this, "left/내림차순",
 								Toast.LENGTH_SHORT).show();
-						Word.arrange = "asc";
-						refresh();
+						if(!Word.arrange.equals("desc")){
+							Word.arrange = "desc";
+							refresh();
+						}
 					}
 
 					public void onSwipeBottom() {
 						Toast.makeText(ListActivity.this, "bottom",
 								Toast.LENGTH_SHORT).show();
+						
+						etSearch.setOnFocusChangeListener(new OnFocusChangeListener() {
+				            @Override
+				            public void onFocusChange(View v, boolean hasFocus) {
+				            	etSearch.post(new Runnable() {
+				                    @Override
+				                    public void run() {
+				                        InputMethodManager imm = (InputMethodManager) getApplication().getSystemService(Context.INPUT_METHOD_SERVICE);
+				                        imm.showSoftInput(etSearch, InputMethodManager.SHOW_IMPLICIT);
+				                    }
+				                });
+				            }
+				        });
+						etSearch.requestFocus();
+						
+						
 
 						searchView.animate().translationY(0).alpha(1.0f)
 								.setListener(new AnimatorListenerAdapter() {

@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.example.floatingbubble.R;
 import com.yapp.mycard.dto.Image;
 
 public class ImageDbAdapter {
