@@ -35,7 +35,7 @@ public class ImageDbHelper extends SQLiteOpenHelper{
 
 		db.execSQL(sql);
 
-		onCreate(db); // 테이블을 지웠으므로 다시 테이블을 만들어주는 과정
+		onCreate(db); 
 	}
 
 }

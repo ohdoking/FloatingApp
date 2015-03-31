@@ -21,10 +21,10 @@ public class ImageDbAdapter {
 
 	public ImageDbAdapter(Context context) {
 		this.context = context;
-		helper = new ImageDbHelper(context, // ���� ȭ���� context
-				"ImageGroup.db", // ���ϸ�
-				null, // Ŀ�� ���丮
-				1); // ���� ��ȣ
+		helper = new ImageDbHelper(context, 
+				"ImageGroup.db", 
+				null, 
+				1); 
 		db = helper.getWritableDatabase();
 	}
 
@@ -47,7 +47,7 @@ public class ImageDbAdapter {
 
 		l = db.insert("image", null, values); 
 
-		return l; // tip : ���콺�� db.insert�� �÷����� �Ű������� � ���� �;� �ϴ��� �� �� �ִ�.
+		return l; 
 
 	}
 
@@ -55,7 +55,7 @@ public class ImageDbAdapter {
 
 	public void update(Image img, String cardNum) {
 
-		db = helper.getWritableDatabase(); // db ��ü�� ���´�. ���Ⱑ��
+		db = helper.getWritableDatabase(); 
 
 		ContentValues values = new ContentValues();
 
