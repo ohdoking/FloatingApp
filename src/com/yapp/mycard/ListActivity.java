@@ -43,6 +43,7 @@ import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -57,6 +58,7 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -210,90 +212,93 @@ public class ListActivity extends Activity implements
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			String tempSearch = etSearch.getText().toString();
-			final ArrayList<Image> imgList = imageDb.select(tempSearch);
-
-		
-	        
-	        Log.i("ohdokingDB", String.valueOf(imgList.size()));
-
-			if (imgList.size() == 0) {
-				Toast.makeText(ListActivity.this, "검색 결과가 없습니다.",
-						Toast.LENGTH_SHORT).show();
-			} else {
-				Builder builderSingle = new AlertDialog.Builder(
-						ListActivity.this);
-				builderSingle.setTitle("검색 결과");
-				final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-						ListActivity.this,
-						android.R.layout.simple_selectable_list_item);
-
-				for (Image img : imgList) {
-					arrayAdapter.add(img.getName());
-				}
-				builderSingle.setNegativeButton("cancel",
-						new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								dialog.dismiss();
-							}
-						});
-				
-				builderSingle.setAdapter(arrayAdapter,
-						new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								String strName = arrayAdapter
-										.getItem(which);
-								final LinearLayout linear2 = (LinearLayout) View
-										.inflate(ListActivity.this,
-												R.layout.pop_up, null);
-								final TextView tempName = (TextView) linear2
-										.findViewById(R.id.imgName);
-								final ImageView tempImg = (ImageView) linear2
-										.findViewById(R.id.imgTest);
-								final TextView tempText = (TextView) linear2
-										.findViewById(R.id.imgText);
-								// set the larger image view to display the
-								// chosen bitmap calling
-								// picView.setImageBitmap(imgAdapt.getPic(position));
-								// result.setText(
-								// imgAdapt.getImage(position).getName());
-								
-								Builder b = new AlertDialog.Builder(
-										ListActivity.this).setView(linear2)
-										.setCancelable(true);
-								
-								alAddDialog = b.create();
-								alAddDialog.setCanceledOnTouchOutside(true);
-								alAddDialog.show();
-								
-								Image imgTemp = null;
-
-								for (Image curVal : imgList) {
-									if (curVal.getName().equals(strName)) {
-										imgTemp = curVal;
-									}
-								}
-
-								// currentCardName.setText(selectImg.getName());
-								imgAdapt.notifyDataSetChanged();
-								tempName.setText(imgTemp.getName());
-								tempImg.setImageBitmap(BitmapFactory
-										.decodeFile(imgTemp.getImg()));
-								tempText.setText(String.valueOf(imgTemp
-										.getCardNum()));
-							}
-						}).show();
-			}
+			searchEvent();
 
 		}
 	};
+	
+	public void searchEvent(){
+		String tempSearch = etSearch.getText().toString();
+		final ArrayList<Image> imgList = imageDb.select(tempSearch);
+
+	
+        
+        Log.i("ohdokingDB", String.valueOf(imgList.size()));
+
+		if (imgList.size() == 0) {
+			Toast.makeText(ListActivity.this, "검색 결과가 없습니다.",
+					Toast.LENGTH_SHORT).show();
+		} else {
+			Builder builderSingle = new AlertDialog.Builder(
+					ListActivity.this);
+			builderSingle.setTitle("검색 결과");
+			final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+					ListActivity.this,
+					android.R.layout.simple_selectable_list_item);
+
+			for (Image img : imgList) {
+				arrayAdapter.add(img.getName());
+			}
+			builderSingle.setNegativeButton("cancel",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog,
+								int which) {
+							dialog.dismiss();
+						}
+					});
+			
+			builderSingle.setAdapter(arrayAdapter,
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog,
+								int which) {
+							String strName = arrayAdapter
+									.getItem(which);
+							final LinearLayout linear2 = (LinearLayout) View
+									.inflate(ListActivity.this,
+											R.layout.pop_up, null);
+							final TextView tempName = (TextView) linear2
+									.findViewById(R.id.imgName);
+							final ImageView tempImg = (ImageView) linear2
+									.findViewById(R.id.imgTest);
+							final TextView tempText = (TextView) linear2
+									.findViewById(R.id.imgText);
+							// set the larger image view to display the
+							// chosen bitmap calling
+							// picView.setImageBitmap(imgAdapt.getPic(position));
+							// result.setText(
+							// imgAdapt.getImage(position).getName());
+							
+							Builder b = new AlertDialog.Builder(
+									ListActivity.this).setView(linear2)
+									.setCancelable(true);
+							
+							alAddDialog = b.create();
+							alAddDialog.setCanceledOnTouchOutside(true);
+							alAddDialog.show();
+							
+							Image imgTemp = null;
+
+							for (Image curVal : imgList) {
+								if (curVal.getName().equals(strName)) {
+									imgTemp = curVal;
+								}
+							}
+
+							// currentCardName.setText(selectImg.getName());
+							imgAdapt.notifyDataSetChanged();
+							tempName.setText(imgTemp.getName());
+							tempImg.setImageBitmap(BitmapFactory
+									.decodeFile(imgTemp.getImg()));
+							tempText.setText(String.valueOf(imgTemp
+									.getCardNum()));
+						}
+					}).show();
+		}
+	}
 	
 	
 	// 카드보기
@@ -1327,13 +1332,23 @@ public class ListActivity extends Activity implements
 						Toast.makeText(ListActivity.this, "bottom",
 								Toast.LENGTH_SHORT).show();
 						
+						
+						etSearch.setOnEditorActionListener(new OnEditorActionListener() {
+							
+							@Override
+							public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+								searchEvent();
+								return true;
+							}
+						});
 						etSearch.setOnFocusChangeListener(new OnFocusChangeListener() {
 				            @Override
 				            public void onFocusChange(View v, boolean hasFocus) {
 				            	etSearch.post(new Runnable() {
 				                    @Override
 				                    public void run() {
-				                        InputMethodManager imm = (InputMethodManager) getApplication().getSystemService(Context.INPUT_METHOD_SERVICE);
+				                      
+				                    	InputMethodManager imm = (InputMethodManager) getApplication().getSystemService(Context.INPUT_METHOD_SERVICE);
 				                        imm.showSoftInput(etSearch, InputMethodManager.SHOW_IMPLICIT);
 				                    }
 				                });

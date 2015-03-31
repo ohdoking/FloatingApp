@@ -21,6 +21,7 @@
         <activity
             android:name="com.yapp.mycard.FloatingBubbleActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent" >
 
             <!--
@@ -28,7 +29,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>
             -->
         </activity>
 
@@ -36,6 +37,7 @@
 
         <activity
             android:name="com.yapp.mycard.ListActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Translucent_Dialog" >
         </activity>
         <activity
@@ -52,6 +54,7 @@
         </activity>
         <activity
             android:name="com.yapp.mycard.AlertDialogActivity"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Light.WallpaperSettings" >
         </activity>
 
@@ -61,11 +64,13 @@
         <activity
             android:name="com.yapp.mycard.TutorialActivity"
             android:label="@string/title_activity_tutorial"
+            android:screenOrientation="portrait"
             android:theme="@style/Translucent_Dialog" >
         </activity>
         <activity
             android:name="com.yapp.mycard.SflashActivity"
             android:label="@string/title_activity_sflash"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Translucent.custom" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
