@@ -43,6 +43,7 @@ import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -132,7 +133,6 @@ public class ListActivity extends Activity implements
 	LinearLayout searchView;
 	
 	
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -204,7 +204,6 @@ public class ListActivity extends Activity implements
 	/*
 	 * Click
 	 */
-
 	
 	//카드 검색
 	
@@ -616,7 +615,7 @@ public class ListActivity extends Activity implements
 			if (!imageDb.isEmpty()) {
 				imgAdapt = new PicAdapter(this, l);
 			} else {
-				picGallery.setBackgroundResource(R.drawable.temp_id);
+				picGallery.setBackgroundResource(R.drawable.no_card);
 				picGallery.setScaleX((float) 0.6);
 				picGallery.setScaleY(1);
 
@@ -943,38 +942,50 @@ public class ListActivity extends Activity implements
 				// galleryContext.getResources(), l.get(i).getImg());
 				// placeholder = BitmapFactory.decodeFile(l.get(i).getImg());
 
-				if (0 == i % 6) {
+				if (0 == i %8) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
 							R.drawable.realcard_black);
-				} else if (1 == i % 6) {
+				} else if (1 == i % 8) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
 							R.drawable.realcard_gold);
-				} else if (2 == i % 6) {
+				} else if (2 == i % 8) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
 							R.drawable.realcard_gray);
 
-				}else if (3 == i % 6) {
+				}else if (3 == i % 8) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
 							R.drawable.yapp_card_pink);
-				} else if (4 == i % 6) {
+				} else if (4 == i % 8) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
 							R.drawable.yapp_card_purple);
 
-				}else if (5 == i % 6) {
+				}else if (5 == i % 8) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
 							R.drawable.yapp_card_sky);
+				}
+				else if (6 == i % 8) {
+
+					placeholder = BitmapFactory.decodeResource(
+							galleryContext.getResources(),
+							R.drawable.s_card_blue);
+				}
+				else if (7 == i % 8) {
+
+					placeholder = BitmapFactory.decodeResource(
+							galleryContext.getResources(),
+							R.drawable.o_card_green);
 				}
 
 				imageBitmaps[i] = placeholder;
@@ -1292,9 +1303,11 @@ public class ListActivity extends Activity implements
 
 		totalView
 				.setOnTouchListener(new OnSwipeTouchListener(ListActivity.this) {
+					InputMethodManager imm = (InputMethodManager) getApplication().getSystemService(Context.INPUT_METHOD_SERVICE);
 					public void onSwipeTop() {
-						Toast.makeText(ListActivity.this, "top",
-								Toast.LENGTH_SHORT).show();
+						
+						
+
 						searchView.animate().translationY(0).alpha(0.0f)
 								.setListener(new AnimatorListenerAdapter() {
 									@Override
@@ -1303,14 +1316,30 @@ public class ListActivity extends Activity implements
 										super.onAnimationEnd(animation);
 										searchView
 												.setVisibility(View.INVISIBLE);
+										
+										
 									}
 								});
+						
+						etSearch.setOnFocusChangeListener(new OnFocusChangeListener() {
+
+					        public void onFocusChange(View v, boolean hasFocus) {
+
+					            if(!hasFocus){
+					            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); 
+					            imm.hideSoftInputFromWindow( etSearch.getWindowToken(), 0 );
+					            }
+					        }
+					    });
+						
+//						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+//						 imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 					}
 
 					public void onSwipeRight() {
 						
 						if(!Word.arrange.equals("asc")){
-							Toast.makeText(ListActivity.this, "right/오름차순",
+							Toast.makeText(ListActivity.this, "카드가 오름차순으로 정렬되었습니다.",
 									Toast.LENGTH_SHORT).show();
 							
 							Word.arrange = "asc";
@@ -1320,7 +1349,7 @@ public class ListActivity extends Activity implements
 
 					public void onSwipeLeft() {
 						
-						Toast.makeText(ListActivity.this, "left/내림차순",
+						Toast.makeText(ListActivity.this, "카드가 내림차순으로 정렬 되었습니다.",
 								Toast.LENGTH_SHORT).show();
 						if(!Word.arrange.equals("desc")){
 							Word.arrange = "desc";
@@ -1329,8 +1358,6 @@ public class ListActivity extends Activity implements
 					}
 
 					public void onSwipeBottom() {
-						Toast.makeText(ListActivity.this, "bottom",
-								Toast.LENGTH_SHORT).show();
 						
 						
 						etSearch.setOnEditorActionListener(new OnEditorActionListener() {
@@ -1348,7 +1375,6 @@ public class ListActivity extends Activity implements
 				                    @Override
 				                    public void run() {
 				                      
-				                    	InputMethodManager imm = (InputMethodManager) getApplication().getSystemService(Context.INPUT_METHOD_SERVICE);
 				                        imm.showSoftInput(etSearch, InputMethodManager.SHOW_IMPLICIT);
 				                    }
 				                });
