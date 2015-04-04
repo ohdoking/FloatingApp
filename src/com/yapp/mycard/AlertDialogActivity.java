@@ -4,14 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
@@ -20,6 +26,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 
 import com.yapp.mycard.function.DbBackup;
 import com.yapp.mycard.function.SettingAdapter;
@@ -46,11 +54,11 @@ public class AlertDialogActivity extends ListActivity {
 		
 		// 북마크 리스트에 아이템을 추가
 		bookmarkItems = new ArrayList<SettingItem>();
-		bookmarkItems.add(new SettingItem("종료", "앱을 종료시킬 수 있습니다."));
+		bookmarkItems.add(new SettingItem("종료", "앱을 종료합니다."));
 		bookmarkItems.add(new SettingItem("튜토리얼", "튜토리얼을 다시 보고 싶으시면.."));
 		bookmarkItems.add(new SettingItem("문의", "문의 사항이나 개선 했으면 하는 점을 알려주세요~"));
 		bookmarkItems.add(new SettingItem("백업", "백업 또는 복구 할 수 있습니다."));
-		bookmarkItems.add(new SettingItem("개발자", "개발자 정보를 볼 수 있습니다."));
+		bookmarkItems.add(new SettingItem("개발자 및 디자이너", "개발자 및 디자이너 정보를 볼 수 있습니다."));
 
 		// 북마크 Adapter 작성
 		bookmarkAdapter = new SettingAdapter(this, R.layout.list_item,
@@ -79,8 +87,8 @@ public class AlertDialogActivity extends ListActivity {
 					questionFuntion();
 				} else if (item.getName().toString().equals("백업")) {
 					backUpFunction();
-				} else if (item.getName().toString().equals("개발자")) {
-
+				} else if (item.getName().toString().equals("개발자 및 디자이너")) {
+					IntroduceFunction();
 				}
 			}
 
@@ -158,15 +166,27 @@ public class AlertDialogActivity extends ListActivity {
 	}
 	
 	void questionFuntion(){
+
+		PackageInfo pInfo = null;
+		try {
+			pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String userInfo = "Model Id : " + Build.MODEL+
+				"\nOs ver : "+android.os.Build.VERSION.RELEASE+
+				"\nApp Ver : " + pInfo.versionName +"\n(위의 데이터를 삭제하지마세요!)\n\n -------------------------------- \n\n ";
 		Intent emailIntent = new Intent(Intent.ACTION_SEND);
 		emailIntent.setData(Uri.parse("mailto:"));
-		emailIntent.setType("text/plain");
+		emailIntent.setType("message/rfc822");
 
 		emailIntent.putExtra(Intent.EXTRA_EMAIL,
 				new String[] { "ohdoking@gmail.com" });
 		 emailIntent.putExtra(Intent.EXTRA_SUBJECT,
-		 "subject of email");
-		 emailIntent.putExtra(Intent.EXTRA_TEXT , "body of email");
+		 "[문의]문의합니다.");
+		 emailIntent.putExtra(Intent.EXTRA_TEXT , userInfo);
 		startActivity(Intent.createChooser(emailIntent, "Send Mail"));
 		finish();
 
@@ -185,6 +205,33 @@ public class AlertDialogActivity extends ListActivity {
 		android.os.Process.killProcess(android.os.Process.myPid()); // 강제종료
 	}
 	
+	public void IntroduceFunction(){
+		
+		final LinearLayout linear = (LinearLayout) View.inflate(
+				AlertDialogActivity.this, R.layout.introduce_page, null);
+		TextView tv = (TextView) linear.findViewById(R.id.introduce_me);
+		String blog = "http://blog.naver.com/ohdoking";
+		String mail = "ohdoking@gmail.com";
+		String blog2 = "soolibar@gmail.com";
+		String blog3 = "pon97206@gmail.com";
+		tv.setText("오도근(Developer) \n블로그 : " + blog  +"\n메일 : "+mail +"\n\n김수린(Developer) \n메일 : "+ blog2 +" \n\n김영롱(Designer) \n메일 : " +blog3);
+		tv.setMovementMethod(LinkMovementMethod.getInstance());
+		Animation anim = AnimationUtils
+				.loadAnimation(this, R.anim.slide_in_top);
+		tv.startAnimation(anim);
+		
+		
+		tv.setMovementMethod(LinkMovementMethod.getInstance());
+
+
+		Builder b = new AlertDialog.Builder(AlertDialogActivity.this).setView(
+				linear).setCancelable(true);
+
+		backupDialog = b.create();
+		backupDialog.setCanceledOnTouchOutside(true);
+		backupDialog.show();
+		
+	}
 	
 	public void closeBroadcast() {
 		final BroadcastReceiver br = new BroadcastReceiver() {
@@ -197,5 +244,6 @@ public class AlertDialogActivity extends ListActivity {
 		};
 		registerReceiver(br, new IntentFilter("listview"));
 	}
+	
 
 }

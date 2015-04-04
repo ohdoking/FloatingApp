@@ -52,26 +52,26 @@ public class SettingAdapter extends ArrayAdapter<SettingItem> {
             ImageView img = (ImageView) view.findViewById(R.id.icon);
             if(item.getName().toString().equals("종료"))
             {
-            	img.setImageResource(R.drawable.close_icon);
+            	img.setImageResource(R.drawable.close_icon_white);
             }
             else if(item.getName().toString().equals("튜토리얼"))
             {
-            	img.setImageResource(R.drawable.tutorial_icon);
+            	img.setImageResource(R.drawable.tutorial_icon_white);
             	
             }
             else if(item.getName().toString().equals("문의"))
             {
-            	img.setImageResource(R.drawable.mail_icon);
+            	img.setImageResource(R.drawable.mail_icon_white);
             	
             }
             else if(item.getName().toString().equals("백업"))
             {
-            	img.setImageResource(R.drawable.backup_icon);
+            	img.setImageResource(R.drawable.backup_icon_white);
             	
             }
-            else if(item.getName().toString().equals("개발자"))
+            else if(item.getName().toString().equals("개발자 및 디자이너"))
             {
-            	img.setImageResource(R.drawable.we_icon);
+            	img.setImageResource(R.drawable.we_icon_white);
             	
             }
         }

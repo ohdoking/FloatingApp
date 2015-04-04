@@ -101,6 +101,8 @@ public class FloatingFaceBubbleService extends Service {
 				intent.putExtra("checkTuto", "Bubble");
 				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
 				context.startActivity(intent); 
+				
+				sendBroadcast(new Intent("listview"));
 			
 			}
 		});

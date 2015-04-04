@@ -70,6 +70,7 @@ import com.google.zxing.common.BitMatrix;
 import com.yapp.mycard.db.ImageDbAdapter;
 import com.yapp.mycard.dto.Image;
 import com.yapp.mycard.dto.Security;
+import com.yapp.mycard.function.OnSwipeTouchListener;
 import com.yapp.mycard.word.Word;
 
 public class ListActivity extends Activity implements
@@ -131,8 +132,7 @@ public class ListActivity extends Activity implements
 
 	LinearLayout totalView;
 	LinearLayout searchView;
-	
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -162,12 +162,9 @@ public class ListActivity extends Activity implements
 		l = new ArrayList<Image>();
 
 		ids();
-		if(Word.arrange.equals("asc"))
-		{
+		if (Word.arrange.equals("asc")) {
 			listUpdate("asc");
-		}
-		else
-		{
+		} else {
 			listUpdate("desc");
 		}
 
@@ -185,6 +182,16 @@ public class ListActivity extends Activity implements
 		closeWindows.setOnClickListener(historyBack);
 
 		btnSearch.setOnClickListener(searchCard);
+
+		etSearch.setOnEditorActionListener(new OnEditorActionListener() {
+
+			@Override
+			public boolean onEditorAction(TextView v, int actionId,
+					KeyEvent event) {
+				searchEvent();
+				return true;
+			}
+		});
 
 	}
 
@@ -204,9 +211,9 @@ public class ListActivity extends Activity implements
 	/*
 	 * Click
 	 */
-	
-	//카드 검색
-	
+
+	// 카드 검색
+
 	public OnClickListener searchCard = new OnClickListener() {
 
 		@Override
@@ -215,21 +222,18 @@ public class ListActivity extends Activity implements
 
 		}
 	};
-	
-	public void searchEvent(){
+
+	public void searchEvent() {
 		String tempSearch = etSearch.getText().toString();
 		final ArrayList<Image> imgList = imageDb.select(tempSearch);
 
-	
-        
-        Log.i("ohdokingDB", String.valueOf(imgList.size()));
+		Log.i("ohdokingDB", String.valueOf(imgList.size()));
 
 		if (imgList.size() == 0) {
 			Toast.makeText(ListActivity.this, "검색 결과가 없습니다.",
 					Toast.LENGTH_SHORT).show();
 		} else {
-			Builder builderSingle = new AlertDialog.Builder(
-					ListActivity.this);
+			Builder builderSingle = new AlertDialog.Builder(ListActivity.this);
 			builderSingle.setTitle("검색 결과");
 			final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
 					ListActivity.this,
@@ -242,20 +246,17 @@ public class ListActivity extends Activity implements
 					new DialogInterface.OnClickListener() {
 
 						@Override
-						public void onClick(DialogInterface dialog,
-								int which) {
+						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
 						}
 					});
-			
+
 			builderSingle.setAdapter(arrayAdapter,
 					new DialogInterface.OnClickListener() {
 
 						@Override
-						public void onClick(DialogInterface dialog,
-								int which) {
-							String strName = arrayAdapter
-									.getItem(which);
+						public void onClick(DialogInterface dialog, int which) {
+							String strName = arrayAdapter.getItem(which);
 							final LinearLayout linear2 = (LinearLayout) View
 									.inflate(ListActivity.this,
 											R.layout.pop_up, null);
@@ -270,15 +271,15 @@ public class ListActivity extends Activity implements
 							// picView.setImageBitmap(imgAdapt.getPic(position));
 							// result.setText(
 							// imgAdapt.getImage(position).getName());
-							
+
 							Builder b = new AlertDialog.Builder(
 									ListActivity.this).setView(linear2)
 									.setCancelable(true);
-							
+
 							alAddDialog = b.create();
 							alAddDialog.setCanceledOnTouchOutside(true);
 							alAddDialog.show();
-							
+
 							Image imgTemp = null;
 
 							for (Image curVal : imgList) {
@@ -298,8 +299,7 @@ public class ListActivity extends Activity implements
 					}).show();
 		}
 	}
-	
-	
+
 	// 카드보기
 	public OnItemClickListener showCard = new OnItemClickListener() {
 		// handle clicks
@@ -307,6 +307,7 @@ public class ListActivity extends Activity implements
 		public void onItemClick(AdapterView<?> parent, View v, int position,
 				long id) {
 
+			
 			final LinearLayout linear2 = (LinearLayout) View.inflate(
 					ListActivity.this, R.layout.pop_up, null);
 			final TextView tempName = (TextView) linear2
@@ -318,14 +319,14 @@ public class ListActivity extends Activity implements
 			// set the larger image view to display the chosen bitmap calling
 			// picView.setImageBitmap(imgAdapt.getPic(position));
 			// result.setText( imgAdapt.getImage(position).getName());
-			
-			Builder b = new AlertDialog.Builder(ListActivity.this)
-					.setView(linear2).setCancelable(true);
-			
+
+			Builder b = new AlertDialog.Builder(ListActivity.this).setView(
+					linear2).setCancelable(true);
+
 			alAddDialog = b.create();
 			alAddDialog.setCanceledOnTouchOutside(true);
 			alAddDialog.show();
-			
+
 			final int pos = position;
 			final Image imgTemp = null;
 
@@ -397,10 +398,8 @@ public class ListActivity extends Activity implements
 
 			addCardimg.setOnClickListener(addImage);
 			// 키 얼럴트 창이 떠오른다!!!!
-			
-			
-			
-			Builder b= new AlertDialog.Builder(ListActivity.this)
+
+			Builder b = new AlertDialog.Builder(ListActivity.this)
 					// .setTitle("추가 페이지")
 					// .setIcon(R.drawable.floating_img3)
 					// .setMessage("hi")
@@ -432,10 +431,10 @@ public class ListActivity extends Activity implements
 
 								}
 							});
-							
-							alAddDialog = b.create();
-							alAddDialog.setCanceledOnTouchOutside(true);
-							alAddDialog.show();
+
+			alAddDialog = b.create();
+			alAddDialog.setCanceledOnTouchOutside(true);
+			alAddDialog.show();
 
 			buttonAdd = alAddDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
 			updateButtonState();
@@ -465,8 +464,6 @@ public class ListActivity extends Activity implements
 			editCarding.setOnClickListener(editImage);
 			final String beforeValue = selectImg.getCardNum();
 
-			
-			
 			Builder b = new AlertDialog.Builder(ListActivity.this)
 					.setView(editLayer)
 					.setCancelable(true)
@@ -530,8 +527,7 @@ public class ListActivity extends Activity implements
 												.equals(String
 														.valueOf(selectImg
 																.getCardNum()))) {
-											tempImg.setImg(selectImg
-													.getImg());
+											tempImg.setImg(selectImg.getImg());
 										}
 
 										imageDb.update(tempImg, beforeValue);
@@ -549,9 +545,9 @@ public class ListActivity extends Activity implements
 									al.dismiss();
 								}
 							});
-					al = b.create();
-					al.setCanceledOnTouchOutside(true);
-					al.show();
+			al = b.create();
+			al.setCanceledOnTouchOutside(true);
+			al.show();
 
 			al.setOnKeyListener(new Dialog.OnKeyListener() {
 				@Override
@@ -589,9 +585,9 @@ public class ListActivity extends Activity implements
 			 * 
 			 * startActivityForResult(i, RESULT_LOAD_IMAGE);
 			 */
-			Intent i = new Intent("com.google.zxing.client.android.SCAN");
+			Intent i = new Intent("com.google.zxing.client.android.SCAN");	
 			// i.putExtra("SCAN_MODE", "QR_CODE_MODE");
-
+			i.setPackage(getPackageName());		    
 			startActivityForResult(i, 0);
 
 		}
@@ -609,18 +605,17 @@ public class ListActivity extends Activity implements
 
 	public void listUpdate(String name) {
 
-			l = imageDb.selectAll(name);
-			// create a new adapter
+		l = imageDb.selectAll(name);
+		// create a new adapter
 
-			if (!imageDb.isEmpty()) {
-				imgAdapt = new PicAdapter(this, l);
-			} else {
-				picGallery.setBackgroundResource(R.drawable.no_card);
-				picGallery.setScaleX((float) 0.6);
-				picGallery.setScaleY(1);
+		if (!imageDb.isEmpty()) {
+			imgAdapt = new PicAdapter(this, l);
+		} else {
+			picGallery.setBackgroundResource(R.drawable.no_card);
+			picGallery.setScaleX((float) 0.6);
+			picGallery.setScaleY(1);
 
-			}
-		
+		}
 
 	}
 
@@ -942,7 +937,7 @@ public class ListActivity extends Activity implements
 				// galleryContext.getResources(), l.get(i).getImg());
 				// placeholder = BitmapFactory.decodeFile(l.get(i).getImg());
 
-				if (0 == i %8) {
+				if (0 == i % 8) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
@@ -958,7 +953,7 @@ public class ListActivity extends Activity implements
 							galleryContext.getResources(),
 							R.drawable.realcard_gray);
 
-				}else if (3 == i % 8) {
+				} else if (3 == i % 8) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
@@ -969,19 +964,17 @@ public class ListActivity extends Activity implements
 							galleryContext.getResources(),
 							R.drawable.yapp_card_purple);
 
-				}else if (5 == i % 8) {
+				} else if (5 == i % 8) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
 							R.drawable.yapp_card_sky);
-				}
-				else if (6 == i % 8) {
+				} else if (6 == i % 8) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
 							R.drawable.s_card_blue);
-				}
-				else if (7 == i % 8) {
+				} else if (7 == i % 8) {
 
 					placeholder = BitmapFactory.decodeResource(
 							galleryContext.getResources(),
@@ -1034,7 +1027,6 @@ public class ListActivity extends Activity implements
 			int width = size.x;
 			int height = size.y;
 
-			Log.i("ohdoking", width + " : " + height);
 			// set layout options
 			imageView.setLayoutParams(new Gallery.LayoutParams(width / 2,
 					height / 4));
@@ -1073,17 +1065,30 @@ public class ListActivity extends Activity implements
 	/*
 	 * 뒤로가기 (back)
 	 */
+/*
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-	/*
-	 * @Override public boolean onKeyDown(int keyCode, KeyEvent event) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * if( keyCode == KeyEvent.KEYCODE_BACK){
-	 * 
-	 * Toast.makeText(this, "Back키를 누르셨군요", Toast.LENGTH_SHORT).show(); return
-	 * false; } return super.onKeyDown(keyCode, event); }
-	 */
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
 
+
+			searchView.animate().translationY(0).alpha(0.0f)
+					.setListener(new AnimatorListenerAdapter() {
+						@Override
+						public void onAnimationEnd(Animator animation) {
+							super.onAnimationEnd(animation);
+							searchView.setVisibility(View.INVISIBLE);
+							addCard.setVisibility(View.VISIBLE);
+
+						}
+					});
+
+
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+*/
 	/**************************************************************
 	 * getting from com.google.zxing.client.android.encode.QRCodeEncoder
 	 * 
@@ -1159,7 +1164,6 @@ public class ListActivity extends Activity implements
 	 * ETC
 	 */
 
-
 	/**
 	 * 
 	 * 
@@ -1169,8 +1173,6 @@ public class ListActivity extends Activity implements
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int pos,
 			long arg3) {
 		currentCardName.setText(imgAdapt.getImage(pos).getName());
-
-		Log.i("ohdokingId", String.valueOf(imgAdapt.getImage(pos).getId()));
 
 		try {
 
@@ -1303,10 +1305,10 @@ public class ListActivity extends Activity implements
 
 		totalView
 				.setOnTouchListener(new OnSwipeTouchListener(ListActivity.this) {
-					InputMethodManager imm = (InputMethodManager) getApplication().getSystemService(Context.INPUT_METHOD_SERVICE);
+					InputMethodManager imm = (InputMethodManager) getApplication()
+							.getSystemService(Context.INPUT_METHOD_SERVICE);
+
 					public void onSwipeTop() {
-						
-						
 
 						searchView.animate().translationY(0).alpha(0.0f)
 								.setListener(new AnimatorListenerAdapter() {
@@ -1316,73 +1318,69 @@ public class ListActivity extends Activity implements
 										super.onAnimationEnd(animation);
 										searchView
 												.setVisibility(View.INVISIBLE);
-										
-										
+										addCard.setVisibility(View.VISIBLE);
+
 									}
 								});
-						
+
 						etSearch.setOnFocusChangeListener(new OnFocusChangeListener() {
 
-					        public void onFocusChange(View v, boolean hasFocus) {
+							public void onFocusChange(View v, boolean hasFocus) {
 
-					            if(!hasFocus){
-					            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); 
-					            imm.hideSoftInputFromWindow( etSearch.getWindowToken(), 0 );
-					            }
-					        }
-					    });
-						
-//						imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-//						 imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+								if (!hasFocus) {
+									InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+									imm.hideSoftInputFromWindow(
+											etSearch.getWindowToken(), 0);
+								}
+							}
+						});
+
+						// imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY,
+						// 0);
+						// imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+						// InputMethodManager.HIDE_NOT_ALWAYS);
 					}
 
 					public void onSwipeRight() {
-						
-						if(!Word.arrange.equals("asc")){
-							Toast.makeText(ListActivity.this, "카드가 오름차순으로 정렬되었습니다.",
-									Toast.LENGTH_SHORT).show();
-							
+
+						if (!Word.arrange.equals("asc")) {
+							Toast.makeText(ListActivity.this,
+									"카드가 오름차순으로 정렬되었습니다.", Toast.LENGTH_SHORT)
+									.show();
+
 							Word.arrange = "asc";
 							refresh();
 						}
 					}
 
 					public void onSwipeLeft() {
-						
-						Toast.makeText(ListActivity.this, "카드가 내림차순으로 정렬 되었습니다.",
-								Toast.LENGTH_SHORT).show();
-						if(!Word.arrange.equals("desc")){
+
+						Toast.makeText(ListActivity.this,
+								"카드가 내림차순으로 정렬 되었습니다.", Toast.LENGTH_SHORT)
+								.show();
+						if (!Word.arrange.equals("desc")) {
 							Word.arrange = "desc";
 							refresh();
 						}
 					}
 
 					public void onSwipeBottom() {
-						
-						
-						etSearch.setOnEditorActionListener(new OnEditorActionListener() {
-							
+
+						etSearch.setOnFocusChangeListener(new OnFocusChangeListener() {
 							@Override
-							public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-								searchEvent();
-								return true;
+							public void onFocusChange(View v, boolean hasFocus) {
+								etSearch.post(new Runnable() {
+									@Override
+									public void run() {
+
+										imm.showSoftInput(
+												etSearch,
+												InputMethodManager.SHOW_IMPLICIT);
+									}
+								});
 							}
 						});
-						etSearch.setOnFocusChangeListener(new OnFocusChangeListener() {
-				            @Override
-				            public void onFocusChange(View v, boolean hasFocus) {
-				            	etSearch.post(new Runnable() {
-				                    @Override
-				                    public void run() {
-				                      
-				                        imm.showSoftInput(etSearch, InputMethodManager.SHOW_IMPLICIT);
-				                    }
-				                });
-				            }
-				        });
 						etSearch.requestFocus();
-						
-						
 
 						searchView.animate().translationY(0).alpha(1.0f)
 								.setListener(new AnimatorListenerAdapter() {
@@ -1391,6 +1389,7 @@ public class ListActivity extends Activity implements
 											Animator animation) {
 										super.onAnimationEnd(animation);
 										searchView.setVisibility(View.VISIBLE);
+										addCard.setVisibility(View.INVISIBLE);
 									}
 								});
 					}

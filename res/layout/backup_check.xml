@@ -2,20 +2,42 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
-
-    <Button
-        android:id="@+id/saveBackup"
+    android:background="@drawable/shape"
+    android:orientation="vertical" >
+	<TextView 
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:gravity="center_horizontal"
+	    android:layout_marginBottom="10dp"
+	    android:background="#afeeee"
+            android:textColor="#0097C6"
+	    android:textSize="20dp"
+	    android:text="백업 또는 복구를 선택해주세요"
+	    />
+    <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="백업" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
 
-    <Button
-        android:id="@+id/loadBackup"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="복구" />
+        <Button
+            android:id="@+id/saveBackup"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_search"
+            android:textColor="#0097C6"
+            android:layout_marginRight="3dp"
+            android:layout_weight="1"
+            android:text="백업" />
+
+        <Button
+            android:id="@+id/loadBackup"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#0097C6"
+            android:background="@drawable/button_search"
+            android:layout_marginLeft="3dp"
+            android:layout_weight="1"
+            android:text="복구" />
+    </LinearLayout>
 
 </LinearLayout>

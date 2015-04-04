@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
  
-    <com.yapp.mycard.PagerContainer
+    <com.yapp.mycard.function.PagerContainer
         android:id="@+id/pager_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
@@ -11,6 +11,6 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal" />
-    </com.yapp.mycard.PagerContainer>
+    </com.yapp.mycard.function.PagerContainer>
  
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.yapp.mycard;
+package com.yapp.mycard.function;
 import android.content.Context;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
